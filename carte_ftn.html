@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Gamma — Carte Monde</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,sans-serif;background:#e8edf2;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+#header{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:#fff;border-bottom:1px solid #e0e0e0;flex-shrink:0;}
+#hblock{display:flex;align-items:center;gap:12px;}
+#hlogo{font-size:20px;font-weight:700;color:#111;letter-spacing:-0.03em;}
+#hlogo span{color:#B8860B;}
+#htitle{font-size:12px;color:#888;margin-top:1px;}
+#hsub{font-size:11px;color:#aaa;margin-top:1px;}
+#chips{display:flex;gap:8px;align-items:center;}
+.chip{text-align:center;background:#f7f7f7;border:1px solid #e0e0e0;border-radius:8px;padding:3px 11px;}
+.chip-v{font-size:14px;font-weight:600;color:#111;}
+.chip-l{font-size:10px;color:#999;}
+#backbtn{display:none;align-items:center;gap:5px;background:#fff;border:1px solid #bbb;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;color:#333;font-family:inherit;}
+#backbtn:hover{background:#f5f5f5;}
+#mapwrap{position:relative;flex:1;overflow:hidden;}
+#zoom-controls{position:absolute;top:14px;right:14px;z-index:20;display:none;flex-direction:column;gap:4px;}
+.zbtn{width:28px;height:28px;background:#fff;border:1px solid #ddd;border-radius:6px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;}
+.zbtn:hover{background:#f0f0f0;}
+#leg{position:absolute;bottom:14px;left:14px;background:rgba(255,255,255,0.97);border:1px solid #ddd;border-radius:8px;padding:10px 14px;font-size:11px;pointer-events:none;z-index:10;}
+#leg-t{font-size:9px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.leg-r{display:flex;align-items:center;gap:8px;color:#444;margin-bottom:6px;}
+.leg-r:last-child{margin-bottom:0;}
+#hint{position:absolute;bottom:14px;right:14px;background:rgba(255,255,255,0.96);border:1px solid #ddd;border-radius:8px;padding:5px 11px;font-size:10px;color:#999;pointer-events:none;z-index:10;}
+#tt{position:absolute;pointer-events:none;z-index:30;background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px 14px;min-width:195px;max-width:260px;display:none;box-shadow:0 4px 16px rgba(0,0,0,.1);}
+#tt-tag{font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;}
+#tt-city{font-size:13px;font-weight:600;color:#111;margin-bottom:4px;}
+#tt-div{height:1px;background:#eee;margin-bottom:6px;}
+#tt-prod{font-size:11px;color:#666;line-height:1.7;}
+#tt-prod b{color:#333;font-weight:600;}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div id="hblock">
+    <div>
+      <div id="hlogo">G<span>Λ</span>MMΛ</div>
+    </div>
+    <div style="width:1px;height:32px;background:#eee;"></div>
+    <div>
+      <div id="htitle">Manufacture horlogère — Carte des implantations</div>
+      <div id="hsub">Survole un continent · Clique pour zoomer</div>
+    </div>
+  </div>
+  <div id="chips">
+    <button id="backbtn">← Monde</button>
+    <div class="chip"><div class="chip-v">9</div><div class="chip-l">Sites</div></div>
+    <div class="chip"><div class="chip-v">5</div><div class="chip-l">Pays</div></div>
+  </div>
+</div>
+
+<div id="mapwrap">
+  <div id="zoom-controls">
+    <button class="zbtn" id="zin">+</button>
+    <button class="zbtn" id="zout">−</button>
+  </div>
+  <div id="tt"><div id="tt-tag"></div><div id="tt-city"></div><div id="tt-div"></div><div id="tt-prod"></div></div>
+  <div id="leg">
+    <div id="leg-t">Légende</div>
+    <div class="leg-r">
+      <svg width="12" height="12" viewBox="0 0 12 12"><rect x="0.5" y="0.5" width="11" height="11" fill="#C0392B" stroke="white" stroke-width="1.2"/></svg>
+      site d'assemblage et de décoration (Genève)
+    </div>
+    <div class="leg-r">
+      <svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="#C0392B" stroke="white" stroke-width="1.2"/><circle cx="6" cy="6" r="2" fill="white"/></svg>
+      Siège social
+    </div>
+    <div class="leg-r">
+      <svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="#FF6100" stroke="white" stroke-width="1.2"/><circle cx="6" cy="6" r="2" fill="white"/></svg>
+      Siège social de différentes FTN qui investissent dans l'entreprise ou collaborent avec elle
+    </div>
+    <div class="leg-r">
+      <svg width="12" height="11" viewBox="0 0 12 11"><polygon points="6,0 12,11 0,11" fill="#5C7A8A" stroke="white" stroke-width="1"/></svg>
+      Site d'origine des matières premières
+    </div>
+    <div class="leg-r">
+      <svg width="12" height="11" viewBox="0 0 12 11"><polygon points="6,0 12,11 0,11" fill="#FF6100" stroke="white" stroke-width="1"/></svg>
+      Site d'origine des composants
+    </div>
+    <div class="leg-r">
+      <svg width="24" height="12" viewBox="0 0 28 12"><rect x="0.5" y="0.5" width="27" height="11" fill="#15AB09" stroke="white" stroke-width="1.2"/></svg>
+      Pays d'extraction
+    </div>
+    <div class="leg-r">
+      <svg width="24" height="12" viewBox="0 0 28 12"><rect x="0.5" y="0.5" width="27" height="11" fill="#E0FF21" stroke="white" stroke-width="1.2"/></svg>
+      Pays de ventes
+    </div>
+
+    <div class="leg-r">
+      <svg width="28" height="10" viewBox="0 0 28 10">
+        <defs><marker id="la" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="4" markerHeight="4" orient="auto"><path d="M1 1L7 4L1 7" fill="none" stroke="#5C7A8A" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+        <line x1="2" y1="5" x2="22" y2="5" stroke="#5C7A8A" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#la)"/>
+      </svg>
+      Flux de matière première
+    </div>
+  </div>
+  <div id="hint">Clique sur un continent pour zoomer</div>
+</div>
+
+<script>
+const C_EXTRACTION = '#5C7A8A';
+const C_SIEGE      = '#C0392B';
+const C_PRINCIPALE = '#B8860B';
+const C_FLUX       = '#5C7A8A';
+const SZ = { extraction: 7, siege: 6, principale: 7 };
+const C_COUNTRY_EXTRACTION = '#15AB09';
+// Matière transportée par site (vers Genève)
+const FLUX_LABEL = {
+  'Kiruna':          'Fer · Acier · Invar',
+  'Sotkamo':         'Nickel · Chrome',
+  'Kittilä':         'Or',
+  'Parnasse':        'Aluminium',
+  'Maremme Toscane': 'Chêne massif',
+  'Murano':          'Verre',
+  'Mine de Giraud':  'Quartz'
+};
+
+function getContByCentroid(lon, lat) {
+  if (isNaN(lon) || isNaN(lat)) return null;
+  if (lat < -55) return null;
+  if (lon < -30) return 'americas';
+  if (lon >= 110 && lat < 10 && lat > -50) return 'oceania';
+  if (lon > 160 || lon < -120) { if (lat > -55 && lat < 30) return 'oceania'; }
+  if (lon >= -25 && lon <= -10 && lat >= 50) return 'europe';
+  if (lon >= -25 && lon <= 45 && lat >= 35) return 'europe';
+  if (lon >= 45 && lat >= 50) return 'asia';
+  if (lon >= -10 && lon <= 45 && lat >= 35) return 'europe';
+  if (lon >= -20 && lon <= 55 && lat >= -40 && lat < 38) return 'africa';
+  if (lon >= 25 && lat >= -12) return 'asia';
+  if (lon >= 25 && lat < -12) return 'oceania';
+  return 'africa';
+}
+const COUNTRY_COLORS = {
+  'France': '#E0FF21',
+  'Italie': C_COUNTRY_EXTRACTION,
+  'Suisse': '#2A9D8F',
+  'Finlande': C_COUNTRY_EXTRACTION,
+  'Suède': C_COUNTRY_EXTRACTION,
+  'Grèce': C_COUNTRY_EXTRACTION,
+  'Norvège': C_COUNTRY_EXTRACTION
+};
+
+const COUNTRY_VIEWS = {
+  'France':  { scale: 1200, cx: 2.2, cy: 46.5 },
+  'Italie':  { scale: 1200, cx: 12.5, cy: 42.5 },
+  'Suisse':  { scale: 3000, cx: 8.3, cy: 46.8 },
+  'Finlande':{ scale: 900, cx: 25,   cy: 65 },
+  'Suède':   { scale: 900, cx: 20,   cy: 62 },
+  'Grèce':   { scale: 1100, cx: 22.5, cy: 39 }
+};
+
+const COUNTRY_CONTINENTS = {
+  'France': 'europe',
+  'Italie': 'europe',
+  'Suisse': 'europe',
+  'Finlande': 'europe',
+  'Suède': 'europe',
+  'Grèce': 'europe',
+  'Norvège': 'europe'
+};
+const CONT_VIEWS = {
+  europe:   { scale: 520, cx: 14,  cy: 54 },
+  asia:     { scale: 230, cx: 88,  cy: 35 },
+  africa:   { scale: 305, cx: 20,  cy:  2 },
+  americas: { scale: 215, cx:-75,  cy:  8 },
+  oceania:  { scale: 360, cx:140,  cy:-25 }
+};
+const CONT_COLORS = {
+  europe:'#0F3C66', asia:'#1F44C2', africa:'#E8D8B8', americas:'#CDB8DC', oceania:'#E3672B'
+};
+const CONT_NAMES  = {
+  europe:'Europe', asia:'Asie', africa:'Afrique', americas:'Amériques', oceania:'Océanie'
+};
+
+const GENEVE_COORDS = [6.1432, 46.2044];
+
+const sites = [
+  { type:'principale', continent:'europe', city:'Genève',          country:'Suisse',   coords:GENEVE_COORDS,    tag:'Site d\'assemblage et de décoration',  produits:['<b>Gamma </b> — maison mère','Stratégie internationale, finance & marketing'] },
+  { type:'siege',      continent:'europe', city:'Lyon',            country:'France',   coords:[4.8357,45.7640], tag:'Siège social',            produits:['<b>Gamma France</b>','Fondée en 2015'] },
+  { type:'extraction', continent:'europe', city:'Kiruna',          country:'Suède',    coords:[20.2253,67.86],  tag:'Acier · Fer · Invar',     produits:['<b>Acier inoxydable</b> — brossé/poli','<b>Invar</b> — alliage de Fer et de Nickel pour spiraux de précision'] },
+  { type:'extraction', continent:'europe', city:'Sotkamo',         country:'Finlande', coords:[28.39,64.13],    tag:'Nickel · Chrome',         produits:['<b>Nickel</b> — composant acier inox et Invar','<b>Chrome</b> — résistance à la corrosion de l\'acier'] },
+  { type:'extraction', continent:'europe', city:'Kittilä',         country:'Finlande', coords:[24.91,67.66],    tag:'Or — Laponie',            produits:['<b>Or</b> — boîtiers, index, aiguilles et cadrans','L\'une des plus grandes mines d\'or d\'Europe'] },
+  { type:'extraction', continent:'europe', city:'Parnasse',        country:'Grèce',    coords:[22.55,38.53],    tag:'Aluminium',               produits:['<b>Aluminium anodisé</b> ','Bauxite extraite sur le massif du Parnasse'] },
+  { type:'extraction', continent:'europe', city:'Maremme Toscane', country:'Italie',   coords:[11.15,42.58],    tag:'Bois massif (chêne)',     produits:['<b>Chêne massif</b> haut de gamme — coffrets','Forêts gérées durablement de Maremme Toscane'] },
+  { type:'extraction', continent:'europe', city:'Murano',          country:'Italie',   coords:[12.35,45.47],    tag:'Verre — Venise',          produits:['<b>Verre trempé</b> — protection anti-choc des cadrans'] },
+  { type:'extraction', continent:'europe', city:'Drag',            country:'Norvège',  coords:[15.35,68.65],     tag:'Quartz',                  produits:['<b>Quartz silencieux premium</b> — mouvements haute précision','Vibrations ultra-silencieuses, zéro tic-tac'] }
+];
+
+let zoomedIn = false, hoveredCont = null, currentCont = null;
+const wrap = document.getElementById('mapwrap');
+const tt   = document.getElementById('tt');
+
+function GW() { return wrap.clientWidth; }
+function GH() { return wrap.clientHeight; }
+
+let baseScale = 153, baseCX = 0, baseCY = 0;
+let zoomK = 1, zoomTX = 0, zoomTY = 0;
+
+function makeProj() {
+  return d3.geoNaturalEarth1()
+    .scale(baseScale * zoomK)
+    .translate([GW()/2 + zoomTX, GH()/2 + zoomTY])
+    .center([baseCX, baseCY]);
+}
+
+let proj = makeProj();
+let pg   = d3.geoPath().projection(proj);
+
+const svg = d3.select('#mapwrap').append('svg')
+  .attr('width', GW()).attr('height', GH())
+  .style('position','absolute').style('top',0).style('left',0);
+
+// Defs : marqueur de flèche
+svg.append('defs').html(`
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+    markerWidth="4" markerHeight="4" orient="auto">
+    <path d="M1 1L9 5L1 9" fill="none" stroke="${C_FLUX}"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+`);
+
+const contCache = {};
+function getCont(d) {
+  if (contCache[d.id] !== undefined) return contCache[d.id];
+  try { const [lo,la] = d3.geoCentroid(d); contCache[d.id] = getContByCentroid(lo,la); }
+  catch(e) { contCache[d.id] = null; }
+  return contCache[d.id];
+}
+
+function triPath(cx, cy, sz) {
+  const w = sz*2, h = sz*2.2;
+  return `M${cx} ${cy+h/2} L${cx-w/2} ${cy-h/2} L${cx+w/2} ${cy-h/2}Z`;
+}
+function sqPath(cx, cy, sz) {
+  return `M${cx-sz} ${cy-sz} L${cx+sz} ${cy-sz} L${cx+sz} ${cy+sz} L${cx-sz} ${cy+sz}Z`;
+}
+
+// Décale le point de départ/arrivée de la flèche pour ne pas chevaucher le figuré
+function shorten(x1,y1,x2,y2,offset) {
+  const dx = x2-x1, dy = y2-y1;
+  const d  = Math.sqrt(dx*dx+dy*dy);
+  if (d < offset*2) return [x1,y1,x2,y2];
+  const ux = dx/d, uy = dy/d;
+  return [x1+ux*offset, y1+uy*offset, x2-ux*offset, y2-uy*offset];
+}
+
+// Position du label au milieu de la flèche, légèrement décalé
+function midLabel(x1,y1,x2,y2) {
+  const mx = (x1+x2)/2, my = (y1+y2)/2;
+  const dx = x2-x1, dy = y2-y1;
+  const d  = Math.sqrt(dx*dx+dy*dy);
+  // perpendiculaire, décalé de 8px vers le haut/gauche
+  const nx = -dy/d * 9, ny = dx/d * 9;
+  return [mx+nx, my+ny];
+}
+
+function refreshColors() {
+  svg.selectAll('path.ctry').attr('fill', function(d) {
+    const c = getCont(d);
+    if (!c) return '#eaeae6';
+    
+    // Appliquer la couleur du pays si elle existe
+    const countryName = d.properties.name;
+    if (COUNTRY_COLORS[countryName]) {
+      return COUNTRY_COLORS[countryName];
+    }
+    
+    if (zoomedIn) {
+      if (c === currentCont) {
+        return CONT_COLORS[c];
+      }
+      return '#eaeae6';
+    }
+    if (hoveredCont && c === hoveredCont) return CONT_COLORS[c];
+    return '#eaeae6';
+  });
+}
+
+// Groupe pour les flèches (en dessous des marqueurs)
+const fluxGroup   = svg.append('g').attr('class','flux-group');
+// Groupe pour les marqueurs
+const markerGroup = svg.append('g').attr('class','marker-group');
+
+function repositionFlux() {
+  fluxGroup.selectAll('*').remove();
+  if (!zoomedIn) return;
+
+  proj = makeProj();
+  const [gx, gy] = proj(GENEVE_COORDS);
+
+  sites.filter(s => s.type === 'extraction' && s.continent === currentCont).forEach(s => {
+    const [sx, sy] = proj(s.coords);
+    const [x1,y1,x2,y2] = shorten(sx,sy,gx,gy,10);
+    const [lx,ly] = midLabel(x1,y1,x2,y2);
+    const label = FLUX_LABEL[s.city] || '';
+
+    // Ligne en pointillés avec flèche
+    fluxGroup.append('line')
+      .attr('x1',x1).attr('y1',y1).attr('x2',x2).attr('y2',y2)
+      .attr('stroke', C_FLUX).attr('stroke-width', 1.2)
+      .attr('stroke-dasharray','5,3')
+      .attr('marker-end','url(#arrow)')
+      .attr('opacity', 0.75);
+
+    // Fond blanc du label
+    const labelG = fluxGroup.append('g');
+    const txt = labelG.append('text')
+      .attr('x', lx).attr('y', ly)
+      .attr('text-anchor','middle')
+      .attr('font-size','8px')
+      .attr('font-family','system-ui,sans-serif')
+      .attr('font-weight','600')
+      .attr('fill', '#2a4a5a')
+      .text(label);
+
+    // Petit fond blanc derrière le texte pour lisibilité
+    const bbox = { w: label.length * 4.8 + 6, h: 10 };
+    labelG.insert('rect','text')
+      .attr('x', lx - bbox.w/2).attr('y', ly - 8)
+      .attr('width', bbox.w).attr('height', bbox.h)
+      .attr('fill','rgba(255,255,255,0.82)')
+      .attr('rx', 2);
+  });
+}
+
+function repositionMarkers() {
+  proj = makeProj();
+  pg   = d3.geoPath().projection(proj);
+  svg.selectAll('path.ctry').attr('d', pg);
+  repositionFlux();
+
+  markerGroup.selectAll('g.mk').each(function(_, i) {
+    const s = sites[i];
+    const visible = zoomedIn && s.continent === currentCont;
+    const g = d3.select(this);
+    g.attr('display', visible ? null : 'none');
+    if (!visible) return;
+
+    const [px,py] = proj(s.coords);
+    const sz = SZ[s.type];
+
+    if (s.type === 'siege') {
+      g.select('circle.halo-c').attr('cx',px).attr('cy',py);
+      g.select('circle.main').attr('cx',px).attr('cy',py);
+      g.select('circle.inner').attr('cx',px).attr('cy',py);
+    } else {
+      const fn = s.type === 'principale' ? sqPath : triPath;
+      g.select('path.halo').attr('d', fn(px,py,sz+4));
+      g.select('path.main').attr('d', fn(px,py,sz));
+    }
+    const anchor = px > GW()*0.72 ? 'end' : 'start';
+    const dx = px > GW()*0.72 ? -(sz+6) : (sz+6);
+    g.select('text').attr('x',px+dx).attr('y',py+4).attr('text-anchor',anchor);
+  });
+}
+
+// Zoom molette
+const zoomBehavior = d3.zoom().scaleExtent([1,14])
+  .on('zoom', function(event) {
+    if (!zoomedIn) return;
+    const t = event.transform;
+    zoomK  = t.k;
+    zoomTX = t.x;
+    zoomTY = t.y;
+    repositionMarkers();
+    refreshColors();
+  });
+svg.call(zoomBehavior);
+
+// Reset zoom transform when returning to world view
+function resetZoomTransform() {
+  svg.call(zoomBehavior.transform, d3.zoomIdentity);
+}
+
+document.getElementById('zin').addEventListener('click',  () => { if (zoomedIn) svg.transition().duration(300).call(zoomBehavior.scaleBy,1.5); });
+document.getElementById('zout').addEventListener('click', () => { if (zoomedIn) svg.transition().duration(300).call(zoomBehavior.scaleBy,0.67); });
+
+document.getElementById('backbtn').addEventListener('click', function() {
+  zoomedIn = false; currentCont = null; hoveredCont = null;
+  zoomK = 1; zoomTX = 0; zoomTY = 0;
+  baseScale = 153; baseCX = 0; baseCY = 0;
+  resetZoomTransform();
+  fluxGroup.selectAll('*').remove();
+  repositionMarkers();
+  refreshColors();
+  this.style.display = 'none';
+  document.getElementById('zoom-controls').style.display = 'none';
+  document.getElementById('hsub').textContent = 'Survole un continent · Clique pour zoomer';
+  document.getElementById('hint').style.display = 'block';
+  tt.style.display = 'none';
+});
+
+// Chargement
+fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+  .then(r => r.json())
+  .then(world => {
+    const countries = topojson.feature(world, world.objects.countries);
+    svg.insert('rect','g').attr('width',GW()).attr('height',GH()).attr('fill','#c9d8e6');
+
+    svg.insert('g','g.flux-group').selectAll('path.ctry')
+      .data(countries.features).enter()
+      .append('path').attr('class','ctry')
+      .attr('d',pg)
+      .attr('fill','#eaeae6').attr('stroke','#c0c0bb').attr('stroke-width',0.4)
+      .style('transition','fill 0.2s')
+      .on('mouseover', function(ev,d) {
+      if (zoomedIn) return;
+      const c = getCont(d); if (!c) return;
+      if (hoveredCont !== c) { hoveredCont=c; refreshColors(); }
+      document.getElementById('hsub').textContent = CONT_NAMES[c]+' — clique pour zoomer';
+      wrap.style.cursor = 'pointer';
+      })
+      .on('mouseout', function() {
+      if (zoomedIn) return;
+      hoveredCont=null; refreshColors();
+      document.getElementById('hsub').textContent = 'Survole un continent · Clique pour zoomer';
+      wrap.style.cursor = 'default';
+      })
+      .on('click', function(ev,d) {
+      if (zoomedIn) return;
+      const c = getCont(d); if (!c) return;
+      const countryName = Object.keys(COUNTRY_CONTINENTS).find(k => COUNTRY_CONTINENTS[k]===c);
+      if (!countryName || !COUNTRY_VIEWS[countryName]) return;
+      currentCont=c; zoomedIn=true; hoveredCont=null;
+      zoomK=1; zoomTX=0; zoomTY=0;
+      svg.call(zoomBehavior.transform, d3.zoomIdentity);
+      const v = COUNTRY_VIEWS[countryName];
+      baseScale=v.scale; baseCX=v.cx; baseCY=v.cy;
+      proj=makeProj(); pg=d3.geoPath().projection(proj);
+      svg.selectAll('path.ctry').transition().duration(700).attr('d',pg);
+      refreshColors();
+      setTimeout(repositionMarkers, 720);
+      document.getElementById('backbtn').style.display='flex';
+      document.getElementById('zoom-controls').style.display='flex';
+      document.getElementById('hsub').textContent = countryName+' — molette ou +/− pour zoomer';
+      document.getElementById('hint').style.display='none';
+      });
+
+    svg.selectAll('path.ctry').attr('fill', function(d) {
+      const c = getCont(d);
+      if (!c) return '#eaeae6';
+      const countryName = Object.keys(COUNTRY_CONTINENTS).find(k => COUNTRY_CONTINENTS[k]===c);
+      if (countryName && COUNTRY_COLORS[countryName]) {
+        if (zoomedIn) return countryName === Object.keys(COUNTRY_VIEWS).find(k => COUNTRY_VIEWS[k].cx===baseCX && COUNTRY_VIEWS[k].cy===baseCY) ? COUNTRY_COLORS[countryName] : '#eaeae6';
+        if (hoveredCont && c === hoveredCont) return COUNTRY_COLORS[countryName];
+      }
+      return '#eaeae6';
+    });
+
+    // Marqueurs
+    sites.forEach(s => {
+      const [px,py] = proj(s.coords);
+      const color = s.type==='extraction' ? C_EXTRACTION : s.type==='siege' ? C_SIEGE : C_PRINCIPALE;
+      const sz = SZ[s.type];
+      const g = markerGroup.append('g').attr('class','mk').attr('display','none').style('cursor','pointer');
+
+      if (s.type === 'siege') {
+        g.append('circle').attr('class','halo-c').attr('cx',px).attr('cy',py).attr('r',sz+5).attr('fill',color).attr('opacity',0.18);
+        g.append('circle').attr('class','main').attr('cx',px).attr('cy',py).attr('r',sz).attr('fill',color).attr('stroke','white').attr('stroke-width',1.5);
+        g.append('circle').attr('class','inner').attr('cx',px).attr('cy',py).attr('r',sz*0.38).attr('fill','white');
+      } else {
+        const fn = s.type==='principale' ? sqPath : triPath;
+        g.append('path').attr('class','halo').attr('d',fn(px,py,sz+4)).attr('fill',color).attr('opacity',0.18);
+        g.append('path').attr('class','main').attr('d',fn(px,py,sz)).attr('fill',color).attr('stroke','white').attr('stroke-width',1.5).attr('stroke-linejoin','round');
+      }
+      const anchor = px>GW()*0.72?'end':'start';
+      const dx = px>GW()*0.72 ? -(sz+6) : (sz+6);
+      g.append('text').attr('x',px+dx).attr('y',py+4)
+        .attr('font-size','10px').attr('font-family','system-ui,sans-serif')
+        .attr('font-weight','600').attr('text-anchor',anchor)
+        .attr('fill','#111').text(s.city);
+
+      g.on('mouseenter', function(ev) {
+        if (!zoomedIn || s.continent!==currentCont) return;
+        const rect = wrap.getBoundingClientRect();
+        let left = ev.clientX-rect.left+14, top = ev.clientY-rect.top-55;
+        if (left+270>rect.width) left=ev.clientX-rect.left-275;
+        if (top<8) top=ev.clientY-rect.top+14;
+        tt.style.left=left+'px'; tt.style.top=top+'px'; tt.style.display='block';
+        document.getElementById('tt-tag').textContent  = s.tag;
+        document.getElementById('tt-city').textContent = s.city+' — '+s.country;
+        document.getElementById('tt-prod').innerHTML   = s.produits.map(p=>'· '+p).join('<br>');
+        const [ppx,ppy]=proj(s.coords);
+        if (s.type==='siege') { g.select('circle.main').attr('r',sz*1.3).attr('stroke-width',2); }
+        else { const fn=s.type==='principale'?sqPath:triPath; g.select('path.main').attr('d',fn(ppx,ppy,sz*1.35)).attr('stroke-width',2); }
+      }).on('mouseleave', function() {
+        tt.style.display='none';
+        const [ppx,ppy]=proj(s.coords);
+        if (s.type==='siege') { g.select('circle.main').attr('r',sz).attr('stroke-width',1.5); }
+        else { const fn=s.type==='principale'?sqPath:triPath; g.select('path.main').attr('d',fn(ppx,ppy,sz)).attr('stroke-width',1.5); }
+      });
+    });
+  });
+</script>
+</body>
+</html>
