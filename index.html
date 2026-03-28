@@ -32,13 +32,13 @@ body{font-family:system-ui,sans-serif;background:#e8edf2;display:flex;flex-direc
   background:rgba(255,255,255,0.97);
   border:1px solid #ddd;border-radius:8px;
   font-size:11px;pointer-events:auto;z-index:10;
-  width:242px;
+  width:248px;
   display:flex;flex-direction:column;
   transition: max-height 0.35s ease;
-  max-height:600px;
+  max-height:320px;
   overflow:hidden;
 }
-#leg.collapsed{ max-height:38px; }
+#leg.collapsed{ max-height:36px; }
 #leg-header{
   display:flex;align-items:center;justify-content:space-between;
   padding:8px 12px;border-bottom:1px solid #eee;
@@ -117,9 +117,15 @@ body{font-family:system-ui,sans-serif;background:#e8edf2;display:flex;flex-direc
       <div class="leg-section planA">
         <div class="leg-section-title">Chaîne de production fragmentée</div>
 
+        <!-- Zone France centrale -->
         <div class="leg-r">
-          <div class="leg-sw" style="background:#15AB09;margin-top:2px;height:14px;border-radius:2px;"></div>
-          Extraction et transformation des matières premières (zone)
+          <div class="leg-sw" style="background:#E63946;margin-top:2px;height:12px;"></div>
+          Pays où réside le siège social de Gamma
+        </div>
+
+        <div class="leg-r">
+          <div class="leg-sw" style="background:#15AB09;margin-top:2px;height:12px;"></div>
+          Extraction et transfo. des matières premières 
         </div>
 
         <div class="leg-r">
@@ -134,38 +140,30 @@ body{font-family:system-ui,sans-serif;background:#e8edf2;display:flex;flex-direc
 
         <div class="leg-r">
           <svg width="13" height="13" viewBox="0 0 13 13"><rect x="0.5" y="0.5" width="12" height="12" fill="#B8860B" stroke="white" stroke-width="1.2"/></svg>
-          Site d'assemblage implanté en zone franche
+          Site d'assemblage — zone franche
         </div>
 
         <div class="leg-r">
           <svg width="13" height="13" viewBox="0 0 13 13"><rect x="0.5" y="0.5" width="12" height="12" fill="#2A6B4A" stroke="white" stroke-width="1.2"/></svg>
-          Site de transformation (Florence)
+          Site de transformation
         </div>
 
-        <!-- flèche MP -->
+        <!-- Flux MP pointillé gris -->
         <div class="leg-r">
           <svg width="32" height="12" viewBox="0 0 32 12">
-            <defs>
-              <marker id="lmp" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto">
-                <path d="M1 1L7 4L1 7" fill="none" stroke="#5C7A8A" stroke-width="1.8" stroke-linecap="round"/>
-              </marker>
-            </defs>
-            <line x1="2" y1="6" x2="26" y2="6" stroke="#5C7A8A" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#lmp)"/>
+            <defs><marker id="lmp" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="M1 1L7 4L1 7" fill="none" stroke="#666" stroke-width="1.8" stroke-linecap="round"/></marker></defs>
+            <line x1="2" y1="6" x2="26" y2="6" stroke="#888" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#lmp)"/>
           </svg>
-          Flux matériel (matières premières)
+          Flux matières premières (pointillé)
         </div>
 
-        <!-- flèche vente -->
+        <!-- Flux produit plein gris -->
         <div class="leg-r">
           <svg width="32" height="12" viewBox="0 0 32 12">
-            <defs>
-              <marker id="lv" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto">
-                <path d="M1 1L7 4L1 7" fill="none" stroke="#7B3F8C" stroke-width="1.8" stroke-linecap="round"/>
-              </marker>
-            </defs>
-            <line x1="2" y1="6" x2="26" y2="6" stroke="#7B3F8C" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#lv)"/>
+            <defs><marker id="lfp" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="M1 1L7 4L1 7" fill="none" stroke="#444" stroke-width="1.8" stroke-linecap="round"/></marker></defs>
+            <line x1="2" y1="6" x2="26" y2="6" stroke="#555" stroke-width="2.5" marker-end="url(#lfp)"/>
           </svg>
-          Flux matériel (horloges vers ventes)
+          Flux produits finis / horloges (plein)
         </div>
       </div>
 
@@ -189,7 +187,7 @@ body{font-family:system-ui,sans-serif;background:#e8edf2;display:flex;flex-direc
         </div>
 
         <div class="leg-r">
-          <div class="leg-sw" style="background:#D4E820;margin-top:2px;height:14px;"></div>
+          <div class="leg-sw" style="background:#D4E820;height:12px;border:1px solid #bbb;margin-top:2px;"></div>
           Pays de vente
         </div>
 
@@ -198,56 +196,66 @@ body{font-family:system-ui,sans-serif;background:#e8edf2;display:flex;flex-direc
             <circle cx="6.5" cy="6.5" r="5.5" fill="#FF6100" stroke="white" stroke-width="1.3"/>
             <circle cx="6.5" cy="6.5" r="2.2" fill="white"/>
           </svg>
-          Siège des FTN investissant dans Gamma (Rolex, Richard Mille)
+          Siège des FTN partenaires / investisseurs
+        </div>
+
+        <div class="leg-r">
+          <svg width="30" height="22" viewBox="0 0 30 22" style="flex-shrink:0;margin-top:1px;">
+            <circle cx="21" cy="11" r="9" fill="rgba(224,255,33,0.55)" stroke="#a0b800" stroke-width="1.2"/>
+            <circle cx="8"  cy="14" r="5" fill="rgba(224,255,33,0.55)" stroke="#a0b800" stroke-width="1.2"/>
+          </svg>
+          CA par pays (taille ∝ ventes) — vue monde uniquement
         </div>
       </div>
 
-      <!-- C : DES RÉSEAUX DE TRANSPORT -->
+      <!-- C : DES RÉSEAUX DE TRANSPORT — seule la couleur distingue -->
       <div class="leg-section planC">
         <div class="leg-section-title">Des réseaux de transports</div>
+        <div style="font-size:9px;color:#888;margin-bottom:6px;">La couleur indique le mode · le style la direction</div>
 
+        <!-- Maritime bleu — plein + pointillé -->
         <div class="leg-r">
-          <svg width="32" height="12" viewBox="0 0 32 12">
+          <svg width="50" height="12" viewBox="0 0 50 12">
             <defs>
-              <marker id="lport" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto">
-                <path d="M1 1L7 4L1 7" fill="none" stroke="#1A5276" stroke-width="2" stroke-linecap="round"/>
-              </marker>
+              <marker id="lmar1" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto"><path d="M1 1L7 4L1 7" fill="none" stroke="#1A5276" stroke-width="2" stroke-linecap="round"/></marker>
+              <marker id="lmar2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto"><path d="M1 1L7 4L1 7" fill="none" stroke="#1A5276" stroke-width="2" stroke-linecap="round"/></marker>
             </defs>
-            <line x1="2" y1="6" x2="26" y2="6" stroke="#1A5276" stroke-width="2.5" marker-end="url(#lport)"/>
+            <line x1="2" y1="4" x2="22" y2="4" stroke="#1A5276" stroke-width="2.2" marker-end="url(#lmar1)"/>
+            <line x1="28" y1="4" x2="48" y2="4" stroke="#1A5276" stroke-width="2.2" stroke-dasharray="5,3" marker-end="url(#lmar2)"/>
           </svg>
-          Transport maritime (ports principaux)
+          Maritime (bleu — plein / pointillé)
         </div>
 
+        <!-- Ferroviaire violet -->
         <div class="leg-r">
-          <svg width="32" height="12" viewBox="0 0 32 12">
+          <svg width="50" height="12" viewBox="0 0 50 12">
             <defs>
-              <marker id="ltrain" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto">
-                <path d="M1 1L7 4L1 7" fill="none" stroke="#7D3C98" stroke-width="2" stroke-linecap="round"/>
-              </marker>
+              <marker id="ltr1" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto"><path d="M1 1L7 4L1 7" fill="none" stroke="#7D3C98" stroke-width="2" stroke-linecap="round"/></marker>
+              <marker id="ltr2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto"><path d="M1 1L7 4L1 7" fill="none" stroke="#7D3C98" stroke-width="2" stroke-linecap="round"/></marker>
             </defs>
-            <line x1="2" y1="6" x2="26" y2="6" stroke="#7D3C98" stroke-width="2.5" stroke-dasharray="7,3" marker-end="url(#ltrain)"/>
+            <line x1="2" y1="4" x2="22" y2="4" stroke="#7D3C98" stroke-width="2.2" marker-end="url(#ltr1)"/>
+            <line x1="28" y1="4" x2="48" y2="4" stroke="#7D3C98" stroke-width="2.2" stroke-dasharray="5,3" marker-end="url(#ltr2)"/>
           </svg>
-          Chemin de fer (commerce européen)
+          Ferroviaire (violet — plein / pointillé)
         </div>
 
+        <!-- Route doré -->
         <div class="leg-r">
-          <svg width="32" height="12" viewBox="0 0 32 12">
+          <svg width="50" height="12" viewBox="0 0 50 12">
             <defs>
-              <marker id="lroute" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto">
-                <path d="M1 1L7 4L1 7" fill="none" stroke="#B7950B" stroke-width="2" stroke-linecap="round"/>
-              </marker>
+              <marker id="lro1" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto"><path d="M1 1L7 4L1 7" fill="none" stroke="#B7950B" stroke-width="2" stroke-linecap="round"/></marker>
+              <marker id="lro2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto"><path d="M1 1L7 4L1 7" fill="none" stroke="#B7950B" stroke-width="2" stroke-linecap="round"/></marker>
             </defs>
-            <line x1="2" y1="6" x2="26" y2="6" stroke="#B7950B" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#lroute)"/>
+            <line x1="2" y1="4" x2="22" y2="4" stroke="#B7950B" stroke-width="2.2" marker-end="url(#lro1)"/>
+            <line x1="28" y1="4" x2="48" y2="4" stroke="#B7950B" stroke-width="2.2" stroke-dasharray="5,3" marker-end="url(#lro2)"/>
           </svg>
-          Route (échange entre pays)
+          Route (doré — plein / pointillé)
         </div>
       </div>
 
       <!-- D : PAYS -->
       <div class="leg-section planD">
         <div class="leg-section-title">Pays (visible au zoom)</div>
-        <div class="leg-r"><div class="leg-sw" style="background:#15AB09;"></div>Pays d'extraction</div>
-        <div class="leg-r"><div class="leg-sw" style="background:#D4E820;border:1px solid #bbb;"></div>Pays de vente</div>
         <div class="leg-r"><div class="leg-sw" style="background:#0F3C66;"></div>Europe</div>
         <div class="leg-r"><div class="leg-sw" style="background:#1F44C2;"></div>Asie</div>
         <div class="leg-r"><div class="leg-sw" style="background:#E8D8B8;"></div>Afrique</div>
@@ -275,8 +283,8 @@ const C_PRINCIPALE = '#B8860B';
 const C_TRANSFO    = '#2A6B4A';
 const C_PARTENAIRE = '#FF6100';
 const C_VENTE      = '#7B3F8C';
-const C_FLUX_MP    = '#5C7A8A';
-const C_FLUX_VENTE = '#7B3F8C';
+const C_FLUX_MP    = '#777';   // gris pointillé = matières premières
+const C_FLUX_VENTE = '#444';   // gris foncé plein = flux produits finis
 const SZ = { extraction:7, composant:7, siege:6, principale:7, transfo:7, partenaire:6, vente:7 };
 
 // Pays spéciaux — UNIQUEMENT colorés au zoom
@@ -296,7 +304,7 @@ const COUNTRY_SPECIAL_ZOOM = {
   410: '#D4E820', // Corée du Sud
   156: '#D4E820', // Chine
    76: '#D4E820', // Brésil
-  250: '#D4E820', // France (métro uniquement)
+  250: '#E63946', // France (métro uniquement)
 };
 
 const CONT_VIEWS = {
@@ -381,10 +389,10 @@ const svg=d3.select('#mapwrap').append('svg')
 // Defs : deux marqueurs de flèches
 svg.append('defs').html(`
   <marker id="arr-mp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-    <path d="M1 1L9 5L1 9" fill="none" stroke="${C_FLUX_MP}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M1 1L9 5L1 9" fill="none" stroke="#777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </marker>
   <marker id="arr-vente" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-    <path d="M1 1L9 5L1 9" fill="none" stroke="${C_FLUX_VENTE}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M1 1L9 5L1 9" fill="none" stroke="#444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </marker>
 `);
 
@@ -429,8 +437,13 @@ function getCountryFill(d){
   // Couleur spéciale ?
   const sp=COUNTRY_SPECIAL_ZOOM[id];
   if(sp){
-    // France : seulement métro
-    if(id===250) return isFranceMetro(d) ? sp : CONT_COLORS[c];
+    // France : centroïde élargi pour être robuste avec le TopoJSON 110m
+    if(id===250){
+      try{
+        const[lo,la]=d3.geoCentroid(d);
+        return (lo>-10&&lo<15&&la>41&&la<52) ? sp : CONT_COLORS[c];
+      }catch(e){ return sp; }
+    }
     return sp;
   }
   return CONT_COLORS[c];
@@ -455,12 +468,12 @@ function midLabel(x1,y1,x2,y2,perp=10){
   return[mx+(-dy/d)*perp, my+(dx/d)*perp];
 }
 function drawFluxLine(g,x1,y1,x2,y2,color,markerId,dash,lw){
-  g.append('line')
+  const line = g.append('line')
     .attr('x1',x1).attr('y1',y1).attr('x2',x2).attr('y2',y2)
     .attr('stroke',color).attr('stroke-width',lw||2)
-    .attr('stroke-dasharray',dash||'6,3')
     .attr('marker-end','url(#'+markerId+')')
     .attr('opacity',0.85);
+  if(dash) line.attr('stroke-dasharray',dash);
 }
 function drawLabel(g,lx,ly,label,color){
   const w=label.length*5.5+10, h=13;
@@ -480,7 +493,7 @@ function repositionFlux(){
   const[fx,fy]=proj(FLORENCE_COORDS);
   const[sx,sy]=proj(SOTKAMO_COORDS);
 
-  // ── Flèches MP ──
+  // ── Flèches MP — gris pointillé ──
   sites.filter(s=>s.type==='extraction'&&s.continent===currentCont).forEach(s=>{
     const info=FLUX_MP[s.city];
     if(!info) return;
@@ -488,32 +501,31 @@ function repositionFlux(){
     let[tx,ty]=info.dest==='florence'?[fx,fy]:info.dest==='sotkamo'?[sx,sy]:[gx,gy];
     const[x1,y1,x2,y2]=shorten(ox,oy,tx,ty,11);
     const lg=fluxGroup.append('g');
-    drawFluxLine(lg,x1,y1,x2,y2,C_FLUX_MP,'arr-mp','6,3',2.2);
+    drawFluxLine(lg,x1,y1,x2,y2,'#777','arr-mp','6,3',2.2);
     if(info.label){
       const[lx,ly]=midLabel(x1,y1,x2,y2,11);
-      drawLabel(lg,lx,ly,info.label,C_FLUX_MP);
+      drawLabel(lg,lx,ly,info.label,'#555');
     }
   });
 
-  // Flèche Florence → Genève (transfo)
+  // Flèche Florence → Genève — gris pointillé
   if(currentCont==='europe'){
     const[x1,y1,x2,y2]=shorten(fx,fy,gx,gy,11);
     const lg=fluxGroup.append('g');
-    drawFluxLine(lg,x1,y1,x2,y2,C_FLUX_MP,'arr-mp','6,3',2.2);
-    drawLabel(lg,...midLabel(x1,y1,x2,y2,11),'Coffrets bois',C_FLUX_MP);
+    drawFluxLine(lg,x1,y1,x2,y2,'#777','arr-mp','6,3',2.2);
+    drawLabel(lg,...midLabel(x1,y1,x2,y2,11),'Coffrets bois','#555');
   }
 
-  // ── Flèches horloges → ventes (depuis Genève) ──
+  // ── Flèches horloges → ventes — gris foncé plein ──
   sites.filter(s=>s.type==='vente'&&s.continent===currentCont).forEach(s=>{
     const[vx,vy]=proj(s.coords);
     const[x1,y1,x2,y2]=shorten(gx,gy,vx,vy,11);
     const lg=fluxGroup.append('g');
-    drawFluxLine(lg,x1,y1,x2,y2,C_FLUX_VENTE,'arr-vente','5,3',2);
-    // label seulement si assez de place
+    drawFluxLine(lg,x1,y1,x2,y2,'#444','arr-vente',null,2.2);
     const dist=Math.sqrt((x2-x1)**2+(y2-y1)**2);
     if(dist>60){
       const[lx,ly]=midLabel(x1,y1,x2,y2,10);
-      drawLabel(lg,lx,ly,'Horloges',C_FLUX_VENTE);
+      drawLabel(lg,lx,ly,'Horloges','#333');
     }
   });
 }
@@ -532,10 +544,19 @@ function getShape(type,cx,cy,sz){
   return null;
 }
 
+const franceZoneGroup=svg.append('g').attr('class','france-zone');
+
+// Zone France — supprimée (la France est directement colorée en rouge via COUNTRY_SPECIAL_ZOOM)
+function drawFranceZone(){
+  franceZoneGroup.selectAll('*').remove();
+}
+
 function repositionMarkers(){
   proj=makeProj(); pg=d3.geoPath().projection(proj);
   svg.selectAll('path.ctry').attr('d',pg);
   repositionFlux();
+  drawFranceZone();
+  updateCABubbles();
   markerGroup.selectAll('g.mk').each(function(_,i){
     const s=sites[i];
     const visible=zoomedIn&&s.continent===currentCont;
@@ -558,6 +579,50 @@ function repositionMarkers(){
   });
 }
 
+// ── Bulles chiffre d'affaires (vue monde uniquement) ──
+const CA_DATA = [
+  { city:'New York',    coords:[-74.006,40.713],  ca:180, label:'USA' },
+  { city:'Los Angeles', coords:[-118.24,34.052],  ca:180, label:'' },
+  { city:'Tokyo',       coords:[139.69,35.689],   ca:95,  label:'Japon' },
+  { city:'Shanghai',    coords:[121.474,31.23],   ca:85,  label:'Chine' },
+  { city:'Séoul',       coords:[126.978,37.566],  ca:55,  label:'Corée du Sud' },
+  { city:'Paris',       coords:[2.3522,48.856],   ca:70,  label:'France' },
+  { city:'Londres',     coords:[-0.128,51.507],   ca:60,  label:'Royaume-Uni' },
+  { city:'Berlin',      coords:[13.405,52.52],    ca:45,  label:'Allemagne' },
+  { city:'Madrid',      coords:[-3.703,40.417],   ca:30,  label:'Espagne' },
+  { city:'Ottawa',      coords:[-75.695,45.421],  ca:40,  label:'Canada' },
+  { city:'Brasilia',    coords:[-47.929,-15.78],  ca:25,  label:'Brésil' },
+];
+// rayon proportionnel au CA (USA = max → r=22)
+const CA_MAX = 180, R_MAX = 22, R_MIN = 8;
+function caRadius(ca){ return R_MIN + (ca/CA_MAX)*(R_MAX-R_MIN); }
+
+const caBubbleGroup = svg.append('g').attr('class','ca-bubbles');
+
+function updateCABubbles(){
+  caBubbleGroup.selectAll('*').remove();
+  if(zoomedIn) return; // visible seulement vue monde
+  const worldProj = d3.geoNaturalEarth1().scale(153).translate([GW()/2, GH()/2]).center([0,0]);
+  CA_DATA.forEach(d=>{
+    const[px,py] = worldProj(d.coords);
+    const r = caRadius(d.ca);
+    const g = caBubbleGroup.append('g').attr('pointer-events','none');
+    g.append('circle')
+      .attr('cx',px).attr('cy',py).attr('r',r)
+      .attr('fill','rgba(224,255,33,0.45)')
+      .attr('stroke','#a0b800')
+      .attr('stroke-width',1.2);
+    if(d.label){
+      g.append('text')
+        .attr('x',px).attr('y',py+r+9)
+        .attr('text-anchor','middle')
+        .attr('font-size','7.5px').attr('font-family','system-ui,sans-serif')
+        .attr('font-weight','600').attr('fill','#555')
+        .text(d.label);
+    }
+  });
+}
+
 const zoomBehavior=d3.zoom().scaleExtent([1,16])
   .on('zoom',function(event){
     if(!zoomedIn) return;
@@ -575,7 +640,9 @@ document.getElementById('backbtn').addEventListener('click',function(){
   zoomK=1; zoomTX=0; zoomTY=0; baseScale=153; baseCX=0; baseCY=0;
   svg.call(zoomBehavior.transform,d3.zoomIdentity);
   fluxGroup.selectAll('*').remove();
+  franceZoneGroup.selectAll('*').remove();
   repositionMarkers(); refreshColors();
+  updateCABubbles();
   this.style.display='none';
   document.getElementById('zoom-controls').style.display='none';
   document.getElementById('hsub').textContent='Survole un continent · Clique pour zoomer';
@@ -666,6 +733,8 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
         else{ g.select('path.main').attr('d',getShape(s.type,ppx,ppy,sz)).attr('stroke-width',1.5); }
       });
     });
+    // Afficher les bulles CA dès le chargement
+    updateCABubbles();
   });
 </script>
 </body>
