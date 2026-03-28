@@ -26,47 +26,50 @@ body{font-family:system-ui,sans-serif;background:#e8edf2;display:flex;flex-direc
 .zbtn{width:28px;height:28px;background:#fff;border:1px solid #ddd;border-radius:6px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#444;}
 .zbtn:hover{background:#f0f0f0;}
 
-/* ── LÉGENDE SCROLLABLE ── */
+/* ── LÉGENDE ── */
 #leg{
   position:absolute;bottom:14px;left:14px;
   background:rgba(255,255,255,0.97);
   border:1px solid #ddd;border-radius:8px;
   font-size:11px;pointer-events:auto;z-index:10;
-  width:230px;
-  max-height: calc(100vh - 100px);
+  width:242px;
   display:flex;flex-direction:column;
+  transition: max-height 0.35s ease;
+  max-height:600px;
+  overflow:hidden;
 }
+#leg.collapsed{ max-height:38px; }
 #leg-header{
   display:flex;align-items:center;justify-content:space-between;
-  padding:8px 12px 6px;
-  border-bottom:1px solid #eee;
-  flex-shrink:0;
-  cursor:default;
+  padding:8px 12px;border-bottom:1px solid #eee;
+  flex-shrink:0;cursor:pointer;user-select:none;
 }
+#leg-header:hover{background:#fafafa;}
 #leg-t{font-size:9px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.12em;}
-#leg-scroll-btns{display:flex;gap:3px;}
-.lbtn{width:20px;height:20px;background:#f5f5f5;border:1px solid #ddd;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;color:#555;line-height:1;}
-.lbtn:hover{background:#eee;}
+#leg-toggle{font-size:13px;color:#888;transition:transform 0.3s;}
+#leg.collapsed #leg-toggle{transform:rotate(180deg);}
 #leg-body{overflow-y:auto;padding:8px 12px 10px;scrollbar-width:thin;scrollbar-color:#ddd transparent;}
 #leg-body::-webkit-scrollbar{width:4px;}
 #leg-body::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px;}
 
-.leg-section{margin-bottom:10px;}
+.leg-section{margin-bottom:11px;}
 .leg-section:last-child{margin-bottom:0;}
 .leg-section-title{
   font-size:9px;font-weight:700;color:#fff;
   text-transform:uppercase;letter-spacing:.1em;
-  padding:3px 7px;border-radius:4px;margin-bottom:6px;
-  display:inline-block;
+  padding:3px 8px;border-radius:4px;margin-bottom:7px;
+  display:block;
 }
-.plan1 .leg-section-title{background:#5C7A8A;}
-.plan2 .leg-section-title{background:#2A6B4A;}
-.plan3 .leg-section-title{background:#7B3F8C;}
-.plan0 .leg-section-title{background:#666;}
+.planA .leg-section-title{background:#5C7A8A;}
+.planB .leg-section-title{background:#8B5E00;}
+.planC .leg-section-title{background:#7B3F8C;}
+.planD .leg-section-title{background:#1A6B3A;}
 
-.leg-r{display:flex;align-items:center;gap:8px;color:#333;margin-bottom:5px;font-size:10.5px;line-height:1.3;}
+.leg-r{display:flex;align-items:flex-start;gap:8px;color:#333;margin-bottom:6px;font-size:10.5px;line-height:1.35;}
 .leg-r:last-child{margin-bottom:0;}
-.leg-swatch{width:18px;height:10px;border-radius:2px;flex-shrink:0;border:1px solid rgba(0,0,0,0.1);}
+.leg-r svg,.leg-r .leg-sw{flex-shrink:0;margin-top:1px;}
+.leg-sw{width:18px;height:10px;border-radius:2px;border:1px solid rgba(0,0,0,0.12);}
+.leg-sub{font-size:9.5px;color:#888;margin-top:2px;line-height:1.5;padding-left:26px;}
 
 #hint{position:absolute;bottom:14px;right:14px;background:rgba(255,255,255,0.96);border:1px solid #ddd;border-radius:8px;padding:5px 11px;font-size:10px;color:#999;pointer-events:none;z-index:10;}
 #tt{position:absolute;pointer-events:none;z-index:30;background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px 14px;min-width:195px;max-width:270px;display:none;box-shadow:0 4px 16px rgba(0,0,0,.1);}
@@ -90,8 +93,8 @@ body{font-family:system-ui,sans-serif;background:#e8edf2;display:flex;flex-direc
   </div>
   <div id="chips">
     <button id="backbtn">← Monde</button>
-    <div class="chip"><div class="chip-v" id="nb-sites">17</div><div class="chip-l">Sites</div></div>
-    <div class="chip"><div class="chip-v" id="nb-pays">14</div><div class="chip-l">Pays</div></div>
+    <div class="chip"><div class="chip-v">23</div><div class="chip-l">Sites</div></div>
+    <div class="chip"><div class="chip-v">14</div><div class="chip-l">Pays</div></div>
   </div>
 </div>
 
@@ -100,102 +103,156 @@ body{font-family:system-ui,sans-serif;background:#e8edf2;display:flex;flex-direc
     <button class="zbtn" id="zin">+</button>
     <button class="zbtn" id="zout">−</button>
   </div>
-
   <div id="tt"><div id="tt-tag"></div><div id="tt-city"></div><div id="tt-div"></div><div id="tt-prod"></div></div>
 
   <!-- LÉGENDE -->
   <div id="leg">
-    <div id="leg-header">
+    <div id="leg-header" onclick="toggleLeg()">
       <span id="leg-t">Légende</span>
-      <div id="leg-scroll-btns">
-        <button class="lbtn" onclick="document.getElementById('leg-body').scrollBy(0,-60)">▲</button>
-        <button class="lbtn" onclick="document.getElementById('leg-body').scrollBy(0,60)">▼</button>
-      </div>
+      <span id="leg-toggle">▲</span>
     </div>
     <div id="leg-body">
 
-      <!-- PLAN I -->
-      <div class="leg-section plan1">
-        <div class="leg-section-title">Plan I — Matières premières</div>
+      <!-- A : CHAÎNE DE PRODUCTION FRAGMENTÉE -->
+      <div class="leg-section planA">
+        <div class="leg-section-title">Chaîne de production fragmentée</div>
+
         <div class="leg-r">
-          <svg width="12" height="11" viewBox="0 0 12 11"><polygon points="6,0 12,11 0,11" fill="#5C7A8A" stroke="white" stroke-width="1"/></svg>
+          <div class="leg-sw" style="background:#15AB09;margin-top:2px;height:14px;border-radius:2px;"></div>
+          Extraction et transformation des matières premières (zone)
+        </div>
+
+        <div class="leg-r">
+          <svg width="13" height="12" viewBox="0 0 13 12"><polygon points="6.5,0 13,12 0,12" fill="#5C7A8A" stroke="white" stroke-width="1"/></svg>
           Site d'origine des matières premières
         </div>
-        <div class="leg-r">
-          <svg width="12" height="11" viewBox="0 0 12 11"><polygon points="6,0 12,11 0,11" fill="#FF6100" stroke="white" stroke-width="1"/></svg>
-          Site d'origine des composants
-        </div>
-        <div class="leg-r">
-          <div class="leg-swatch" style="background:#15AB09;"></div>
-          Pays d'extraction
-        </div>
-        <div class="leg-r">
-          <svg width="28" height="10" viewBox="0 0 28 10">
-            <defs><marker id="la" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="4" markerHeight="4" orient="auto"><path d="M1 1L7 4L1 7" fill="none" stroke="#5C7A8A" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
-            <line x1="2" y1="5" x2="22" y2="5" stroke="#5C7A8A" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#la)"/>
-          </svg>
-          Flux de matière première
-        </div>
-      </div>
 
-      <!-- PLAN II -->
-      <div class="leg-section plan2">
-        <div class="leg-section-title">Plan II — Transformation & production</div>
         <div class="leg-r">
-          <svg width="12" height="12" viewBox="0 0 12 12"><rect x="0.5" y="0.5" width="11" height="11" fill="#B8860B" stroke="white" stroke-width="1.2"/></svg>
-          Site d'assemblage et décoration (Genève)
+          <svg width="13" height="12" viewBox="0 0 13 12"><polygon points="6.5,0 13,12 0,12" fill="#FF6100" stroke="white" stroke-width="1"/></svg>
+          Production de composants
         </div>
+
         <div class="leg-r">
-          <svg width="12" height="12" viewBox="0 0 12 12"><rect x="0.5" y="0.5" width="11" height="11" fill="#2A6B4A" stroke="white" stroke-width="1.2"/></svg>
+          <svg width="13" height="13" viewBox="0 0 13 13"><rect x="0.5" y="0.5" width="12" height="12" fill="#B8860B" stroke="white" stroke-width="1.2"/></svg>
+          Site d'assemblage implanté en zone franche
+        </div>
+
+        <div class="leg-r">
+          <svg width="13" height="13" viewBox="0 0 13 13"><rect x="0.5" y="0.5" width="12" height="12" fill="#2A6B4A" stroke="white" stroke-width="1.2"/></svg>
           Site de transformation (Florence)
         </div>
+
+        <!-- flèche MP -->
         <div class="leg-r">
-          <svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="#C0392B" stroke="white" stroke-width="1.2"/><circle cx="6" cy="6" r="2" fill="white"/></svg>
-          Siège social (Lyon)
+          <svg width="32" height="12" viewBox="0 0 32 12">
+            <defs>
+              <marker id="lmp" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M1 1L7 4L1 7" fill="none" stroke="#5C7A8A" stroke-width="1.8" stroke-linecap="round"/>
+              </marker>
+            </defs>
+            <line x1="2" y1="6" x2="26" y2="6" stroke="#5C7A8A" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#lmp)"/>
+          </svg>
+          Flux matériel (matières premières)
         </div>
+
+        <!-- flèche vente -->
         <div class="leg-r">
-          <svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="#FF6100" stroke="white" stroke-width="1.2"/><circle cx="6" cy="6" r="2" fill="white"/></svg>
-          Siège d'entreprises partenaires / investisseurs (Rolex, Richard Mille)
+          <svg width="32" height="12" viewBox="0 0 32 12">
+            <defs>
+              <marker id="lv" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M1 1L7 4L1 7" fill="none" stroke="#7B3F8C" stroke-width="1.8" stroke-linecap="round"/>
+              </marker>
+            </defs>
+            <line x1="2" y1="6" x2="26" y2="6" stroke="#7B3F8C" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#lv)"/>
+          </svg>
+          Flux matériel (horloges vers ventes)
         </div>
       </div>
 
-      <!-- PLAN III -->
-      <div class="leg-section plan3">
-        <div class="leg-section-title">Plan III — Marchés de vente</div>
+      <!-- B : UN MARCHÉ MONDIALISÉ -->
+      <div class="leg-section planB">
+        <div class="leg-section-title">Un marché mondialisé</div>
+
         <div class="leg-r">
-          <div class="leg-swatch" style="background:#E0FF21;border:1px solid #bbb;"></div>
+          <svg width="13" height="13" viewBox="0 0 13 13">
+            <circle cx="6.5" cy="6.5" r="5.5" fill="#C0392B" stroke="white" stroke-width="1.3"/>
+            <circle cx="6.5" cy="6.5" r="2.2" fill="white"/>
+          </svg>
+          Siège social de Gamma (Lyon)
+        </div>
+
+        <div class="leg-r">
+          <svg width="13" height="13" viewBox="0 0 13 13">
+            <polygon points="6.5,0 13,6.5 6.5,13 0,6.5" fill="#7B3F8C" stroke="white" stroke-width="1.2"/>
+          </svg>
+          Site de vente
+        </div>
+
+        <div class="leg-r">
+          <div class="leg-sw" style="background:#D4E820;margin-top:2px;height:14px;"></div>
           Pays de vente
         </div>
-        <div style="font-size:9.5px;color:#888;margin-top:2px;line-height:1.5;">
-          USA · France · Canada · Allemagne<br>
-          Royaume-Uni · Espagne · Japon<br>
-          Corée du Sud · Chine · Brésil
+
+        <div class="leg-r">
+          <svg width="13" height="13" viewBox="0 0 13 13">
+            <circle cx="6.5" cy="6.5" r="5.5" fill="#FF6100" stroke="white" stroke-width="1.3"/>
+            <circle cx="6.5" cy="6.5" r="2.2" fill="white"/>
+          </svg>
+          Siège des FTN investissant dans Gamma (Rolex, Richard Mille)
         </div>
       </div>
 
-      <!-- Général -->
-      <div class="leg-section plan0">
-        <div class="leg-section-title">Général</div>
+      <!-- C : DES RÉSEAUX DE TRANSPORT -->
+      <div class="leg-section planC">
+        <div class="leg-section-title">Des réseaux de transports</div>
+
         <div class="leg-r">
-          <div class="leg-swatch" style="background:#0F3C66;"></div>
-          Europe (vue continent)
+          <svg width="32" height="12" viewBox="0 0 32 12">
+            <defs>
+              <marker id="lport" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto">
+                <path d="M1 1L7 4L1 7" fill="none" stroke="#1A5276" stroke-width="2" stroke-linecap="round"/>
+              </marker>
+            </defs>
+            <line x1="2" y1="6" x2="26" y2="6" stroke="#1A5276" stroke-width="2.5" marker-end="url(#lport)"/>
+          </svg>
+          Transport maritime (ports principaux)
         </div>
+
         <div class="leg-r">
-          <div class="leg-swatch" style="background:#1F44C2;"></div>
-          Asie (vue continent)
+          <svg width="32" height="12" viewBox="0 0 32 12">
+            <defs>
+              <marker id="ltrain" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto">
+                <path d="M1 1L7 4L1 7" fill="none" stroke="#7D3C98" stroke-width="2" stroke-linecap="round"/>
+              </marker>
+            </defs>
+            <line x1="2" y1="6" x2="26" y2="6" stroke="#7D3C98" stroke-width="2.5" stroke-dasharray="7,3" marker-end="url(#ltrain)"/>
+          </svg>
+          Chemin de fer (commerce européen)
         </div>
+
         <div class="leg-r">
-          <div class="leg-swatch" style="background:#E8D8B8;"></div>
-          Afrique (vue continent)
+          <svg width="32" height="12" viewBox="0 0 32 12">
+            <defs>
+              <marker id="lroute" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto">
+                <path d="M1 1L7 4L1 7" fill="none" stroke="#B7950B" stroke-width="2" stroke-linecap="round"/>
+              </marker>
+            </defs>
+            <line x1="2" y1="6" x2="26" y2="6" stroke="#B7950B" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#lroute)"/>
+          </svg>
+          Route (échange entre pays)
         </div>
-        <div class="leg-r">
-          <div class="leg-swatch" style="background:#CDB8DC;"></div>
-          Amériques (vue continent)
-        </div>
-        <div class="leg-r">
-          <div class="leg-swatch" style="background:#E3672B;"></div>
-          Océanie (vue continent)
-        </div>
+      </div>
+
+      <!-- D : PAYS -->
+      <div class="leg-section planD">
+        <div class="leg-section-title">Pays (visible au zoom)</div>
+        <div class="leg-r"><div class="leg-sw" style="background:#15AB09;"></div>Pays d'extraction</div>
+        <div class="leg-r"><div class="leg-sw" style="background:#D4E820;border:1px solid #bbb;"></div>Pays de vente</div>
+        <div class="leg-r"><div class="leg-sw" style="background:#0F3C66;"></div>Europe</div>
+        <div class="leg-r"><div class="leg-sw" style="background:#1F44C2;"></div>Asie</div>
+        <div class="leg-r"><div class="leg-sw" style="background:#E8D8B8;"></div>Afrique</div>
+        <div class="leg-r"><div class="leg-sw" style="background:#CDB8DC;"></div>Amériques</div>
+        <div class="leg-r"><div class="leg-sw" style="background:#E3672B;"></div>Océanie</div>
       </div>
 
     </div>
@@ -205,49 +262,49 @@ body{font-family:system-ui,sans-serif;background:#e8edf2;display:flex;flex-direc
 </div>
 
 <script>
-// ── Couleurs ──
-const C_EXTRACTION  = '#5C7A8A';
-const C_COMPOSANT   = '#FF6100';
-const C_SIEGE       = '#C0392B';
-const C_PRINCIPALE  = '#B8860B';
-const C_TRANSFO     = '#2A6B4A';
-const C_PARTENAIRE  = '#FF6100';
-const C_FLUX        = '#5C7A8A';
-const SZ = { extraction:7, composant:7, siege:6, principale:7, transfo:7, partenaire:6 };
+// ── toggle légende ──
+function toggleLeg(){
+  document.getElementById('leg').classList.toggle('collapsed');
+}
 
-// Pays colorés en permanence (ISO numeric)
-// extraction = vert, vente = jaune, partenaire = bleu suisse
-// On identifie les pays par leur ISO numeric depuis world-atlas
-const COUNTRY_SPECIAL = {
-  // Extraction (vert)
-  756: { fill:'#15AB09', role:'extraction' },  // Suisse — siège Genève (on coloriera différemment)
-  752: { fill:'#15AB09', role:'extraction' },  // Suède
-  246: { fill:'#15AB09', role:'extraction' },  // Finlande
-  300: { fill:'#15AB09', role:'extraction' },  // Grèce
-  380: { fill:'#15AB09', role:'extraction' },  // Italie
-  578: { fill:'#15AB09', role:'extraction' },  // Norvège
-  // Vente (jaune)
-  840: { fill:'#E0FF21', role:'vente' },  // USA
-  124: { fill:'#E0FF21', role:'vente' },  // Canada
-  276: { fill:'#E0FF21', role:'vente' },  // Allemagne
-  826: { fill:'#E0FF21', role:'vente' },  // Royaume-Uni
-  724: { fill:'#E0FF21', role:'vente' },  // Espagne
-  392: { fill:'#E0FF21', role:'vente' },  // Japon
-  410: { fill:'#E0FF21', role:'vente' },  // Corée du Sud
-  156: { fill:'#E0FF21', role:'vente' },  // Chine
-  76:  { fill:'#E0FF21', role:'vente' },  // Brésil
-  // France = vente (on gère métro séparément)
-  250: { fill:'#E0FF21', role:'vente' },
-  // Suisse = extraction (siège)
+// ── Couleurs ──
+const C_EXTRACTION = '#5C7A8A';
+const C_COMPOSANT  = '#FF6100';
+const C_SIEGE      = '#C0392B';
+const C_PRINCIPALE = '#B8860B';
+const C_TRANSFO    = '#2A6B4A';
+const C_PARTENAIRE = '#FF6100';
+const C_VENTE      = '#7B3F8C';
+const C_FLUX_MP    = '#5C7A8A';
+const C_FLUX_VENTE = '#7B3F8C';
+const SZ = { extraction:7, composant:7, siege:6, principale:7, transfo:7, partenaire:6, vente:7 };
+
+// Pays spéciaux — UNIQUEMENT colorés au zoom
+const COUNTRY_SPECIAL_ZOOM = {
+  752: '#15AB09', // Suède
+  246: '#15AB09', // Finlande
+  300: '#15AB09', // Grèce
+  380: '#15AB09', // Italie
+  578: '#15AB09', // Norvège
+  756: '#15AB09', // Suisse
+  840: '#D4E820', // USA
+  124: '#D4E820', // Canada
+  276: '#D4E820', // Allemagne
+  826: '#D4E820', // Royaume-Uni
+  724: '#D4E820', // Espagne
+  392: '#D4E820', // Japon
+  410: '#D4E820', // Corée du Sud
+  156: '#D4E820', // Chine
+   76: '#D4E820', // Brésil
+  250: '#D4E820', // France (métro uniquement)
 };
-// France métropolitaine : on va filtrer par centroïde lat > 40 && lon > -5 && lon < 10
 
 const CONT_VIEWS = {
-  europe:   { scale:520,  cx:14,  cy:54 },
-  asia:     { scale:230,  cx:88,  cy:35 },
-  africa:   { scale:305,  cx:20,  cy:2  },
-  americas: { scale:215,  cx:-75, cy:8  },
-  oceania:  { scale:360,  cx:140, cy:-25}
+  europe:   { scale:520,  cx:14,  cy:54  },
+  asia:     { scale:230,  cx:88,  cy:35  },
+  africa:   { scale:305,  cx:20,  cy:2   },
+  americas: { scale:215,  cx:-75, cy:8   },
+  oceania:  { scale:360,  cx:140, cy:-25 }
 };
 const CONT_COLORS = {
   europe:'#0F3C66', asia:'#1F44C2', africa:'#E8D8B8', americas:'#CDB8DC', oceania:'#E3672B'
@@ -256,62 +313,63 @@ const CONT_NAMES = {
   europe:'Europe', asia:'Asie', africa:'Afrique', americas:'Amériques', oceania:'Océanie'
 };
 
-// FLUX labels
-const FLUX_LABEL = {
-  'Kiruna':          'Fer · Acier · Invar',
-  'Sotkamo':         'Nickel · Chrome',
-  'Kittilä':         'Or',
-  'Parnasse':        'Aluminium',
-  'Maremme Toscane': 'Chêne massif',
-  'Murano':          'Verre',
-  'Drag':            'Quartz',
-  'Florence':        'Coffrets bois'
+const GENEVE_COORDS = [6.1432, 46.2044];
+const FLORENCE_COORDS = [11.2558, 43.7696];
+
+// Labels sur les flèches
+const FLUX_MP = {
+  'Kiruna':          { dest:'sotkamo', label:'Fer brut → Sotkamo (Invar)' },
+  'Sotkamo':         { dest:'geneve',  label:'Acier inox · Invar · Nickel' },
+  'Kittilä':         { dest:'geneve',  label:'Or' },
+  'Parnasse':        { dest:'geneve',  label:'Aluminium' },
+  'Maremme Toscane': { dest:'florence',label:'Chêne massif' },
+  'Florence':        { dest:'geneve',  label:'Coffrets bois' },
+  'Murano':          { dest:'geneve',  label:'Verre' },
+  'Drag':            { dest:'geneve',  label:'Quartz' },
 };
 
-const GENEVE_COORDS = [6.1432, 46.2044];
+const SOTKAMO_COORDS = [28.39, 64.13];
 
 const sites = [
-  // Plan II — assemblage / siège / partenaires
-  { type:'principale', continent:'europe', city:'Genève',           country:'Suisse',       coords:GENEVE_COORDS,      tag:'Site d\'assemblage et de décoration', produits:['<b>Gamma SA</b> — maison mère','Usine horlogère, assemblage & décoration','Experts horlogers suisses'] },
-  { type:'siege',      continent:'europe', city:'Lyon',             country:'France',        coords:[4.8357,45.764],    tag:'Siège social',            produits:['<b>Gamma France</b> — siège social','8 000 employés · CA 500M€/an','Fondée en 2015 · PDG : Frank Delafosse'] },
-  { type:'transfo',    continent:'europe', city:'Florence',         country:'Italie',        coords:[11.2558,43.7696],  tag:'Site de transformation — coffrage bois', produits:['<b>Coffrage du bois</b> — coffrets et écrins','Menuisiers italiens spécialisés','Flux vers Genève par voie ferroviaire'] },
-  { type:'partenaire', continent:'europe', city:'Genève (Rolex)',   country:'Suisse',        coords:[6.15,46.21],       tag:'Entreprise partenaire / investisseur', produits:['<b>Rolex SA</b> — investisseur & partenaire','Siège mondial à Genève'] },
-  { type:'partenaire', continent:'europe', city:'Genève (R. Mille)',country:'Suisse',        coords:[6.13,46.19],       tag:'Entreprise partenaire / investisseur', produits:['<b>Richard Mille</b> — investisseur & partenaire','Manufacture de haute horlogerie'] },
-  // Plan I — matières premières
-  { type:'extraction', continent:'europe', city:'Kiruna',           country:'Suède',         coords:[20.2253,67.86],    tag:'Acier · Fer · Invar',     produits:['<b>Acier inoxydable</b> — brossé/poli (boîtiers)','<b>Invar</b> — alliage Fe+Ni pour spiraux de précision'] },
-  { type:'extraction', continent:'europe', city:'Sotkamo',          country:'Finlande',      coords:[28.39,64.13],      tag:'Nickel · Chrome',         produits:['<b>Nickel</b> — composant acier inox et Invar','<b>Chrome</b> — résistance à la corrosion'] },
-  { type:'extraction', continent:'europe', city:'Kittilä',          country:'Finlande',      coords:[24.91,67.66],      tag:'Or — Laponie',            produits:['<b>Or</b> — boîtiers, index, aiguilles et cadrans','L\'une des + grandes mines d\'or d\'Europe'] },
-  { type:'extraction', continent:'europe', city:'Parnasse',         country:'Grèce',         coords:[22.55,38.53],      tag:'Aluminium',               produits:['<b>Aluminium anodisé</b> — boîtiers sport & plongée','Bauxite extraite sur le massif du Parnasse'] },
-  { type:'extraction', continent:'europe', city:'Maremme Toscane',  country:'Italie',        coords:[11.15,42.58],      tag:'Bois massif (chêne)',     produits:['<b>Chêne massif</b> — extraction en Maremme Toscane','Transformé à Florence en coffrets'] },
-  { type:'extraction', continent:'europe', city:'Murano',           country:'Italie',        coords:[12.355,45.468],    tag:'Verre — Venise',          produits:['<b>Verre trempé</b> — protection anti-choc des cadrans','Savoir-faire verrier depuis le XIIIe s.'] },
-  { type:'extraction', continent:'europe', city:'Drag',             country:'Norvège',       coords:[15.35,68.65],      tag:'Quartz — Norvège',        produits:['<b>Quartz silencieux premium</b> — haute précision','Vibrations ultra-silencieuses, zéro tic-tac'] },
-  // Plan III — ventes
-  { type:'vente', continent:'americas', city:'New York',       country:'États-Unis',   coords:[-74.006,40.7128],  tag:'Point de vente',  produits:['<b>Boutique New York</b> — 5th Avenue','Marché américain premium'] },
-  { type:'vente', continent:'americas', city:'Los Angeles',    country:'États-Unis',   coords:[-118.243,34.052],  tag:'Point de vente',  produits:['<b>Boutique Los Angeles</b>','Clientèle luxe côte ouest'] },
-  { type:'vente', continent:'americas', city:'Ottawa',         country:'Canada',       coords:[-75.695,45.421],   tag:'Point de vente',  produits:['<b>Boutique Ottawa</b>','Marché canadien'] },
-  { type:'vente', continent:'americas', city:'Brasilia',       country:'Brésil',       coords:[-47.929,-15.78],   tag:'Point de vente',  produits:['<b>Boutique Brasilia</b>','Marché brésilien émergent'] },
-  { type:'vente', continent:'europe',   city:'Paris',          country:'France',       coords:[2.3522,48.856],    tag:'Point de vente',  produits:['<b>Boutique Paris</b> — Rue du Faubourg Saint-Honoré','Vitrine européenne principale'] },
-  { type:'vente', continent:'europe',   city:'Berlin',         country:'Allemagne',    coords:[13.405,52.52],     tag:'Point de vente',  produits:['<b>Boutique Berlin</b>','Marché germanophone'] },
-  { type:'vente', continent:'europe',   city:'Londres',        country:'Royaume-Uni',  coords:[-0.1276,51.507],   tag:'Point de vente',  produits:['<b>Boutique Londres</b> — Bond Street','Marché britannique'] },
-  { type:'vente', continent:'europe',   city:'Madrid',         country:'Espagne',      coords:[-3.703,40.417],    tag:'Point de vente',  produits:['<b>Boutique Madrid</b>','Marché ibérique'] },
-  { type:'vente', continent:'asia',     city:'Tokyo',          country:'Japon',        coords:[139.69,35.689],    tag:'Point de vente',  produits:['<b>Boutique Tokyo</b> — Ginza','Marché japonais haut de gamme'] },
-  { type:'vente', continent:'asia',     city:'Séoul',          country:'Corée du Sud', coords:[126.978,37.566],   tag:'Point de vente',  produits:['<b>Boutique Séoul</b>','Marché coréen en expansion'] },
-  { type:'vente', continent:'asia',     city:'Shanghai',       country:'Chine',        coords:[121.474,31.23],    tag:'Point de vente',  produits:['<b>Boutique Shanghai</b>','Plus grand marché du luxe mondial'] },
+  // Siège & assemblage
+  { type:'principale', continent:'europe', city:'Genève',            country:'Suisse',      coords:GENEVE_COORDS,       tag:'Site d\'assemblage — zone franche', produits:['<b>Gamma SA</b> — maison mère','Usine horlogère, assemblage & décoration','Zone franche de Genève'] },
+  { type:'siege',      continent:'europe', city:'Lyon',              country:'France',      coords:[4.8357,45.764],     tag:'Siège social',       produits:['<b>Gamma France</b> — siège social','8 000 employés · CA 500M€/an','Fondée en 2015 · PDG : Frank Delafosse'] },
+  { type:'transfo',    continent:'europe', city:'Florence',          country:'Italie',      coords:FLORENCE_COORDS,     tag:'Site de transformation — coffrage bois', produits:['<b>Coffrage du bois</b> — coffrets et écrins','Menuisiers italiens spécialisés','Transport ferroviaire vers Genève'] },
+  { type:'partenaire', continent:'europe', city:'Rolex — Genève',    country:'Suisse',      coords:[6.155,46.212],      tag:'FTN investisseur & partenaire', produits:['<b>Rolex SA</b> — investisseur & partenaire','Siège mondial à Genève'] },
+  { type:'partenaire', continent:'europe', city:'Richard Mille — Genève', country:'Suisse', coords:[6.13,46.19],        tag:'FTN investisseur & partenaire', produits:['<b>Richard Mille</b> — investisseur & partenaire','Manufacture de haute horlogerie'] },
+  // Matières premières
+  { type:'extraction', continent:'europe', city:'Kiruna',            country:'Suède',       coords:[20.2253,67.86],     tag:'Fer — Acier — Invar',  produits:['<b>Fer brut</b> → envoyé à Sotkamo pour alliage Invar','<b>Acier inoxydable</b> — brossé/poli (boîtiers)'] },
+  { type:'extraction', continent:'europe', city:'Sotkamo',           country:'Finlande',    coords:[28.39,64.13],       tag:'Nickel · Chrome · Invar', produits:['<b>Nickel & Chrome</b> — composants acier inox','<b>Invar</b> — alliage Fe+Ni produit ici (spiraux de précision)'] },
+  { type:'extraction', continent:'europe', city:'Kittilä',           country:'Finlande',    coords:[24.91,67.66],       tag:'Or — Laponie',         produits:['<b>Or</b> — boîtiers, index, aiguilles et cadrans','L\'une des + grandes mines d\'or d\'Europe'] },
+  { type:'extraction', continent:'europe', city:'Parnasse',          country:'Grèce',       coords:[22.55,38.53],       tag:'Aluminium',            produits:['<b>Aluminium anodisé</b> — boîtiers sport & plongée','Bauxite extraite sur le massif du Parnasse'] },
+  { type:'extraction', continent:'europe', city:'Maremme Toscane',   country:'Italie',      coords:[11.15,42.58],       tag:'Bois massif (chêne)',  produits:['<b>Chêne massif</b> — extraction en Maremme Toscane','→ Transformé à Florence en coffrets'] },
+  { type:'extraction', continent:'europe', city:'Murano',            country:'Italie',      coords:[12.355,45.468],     tag:'Verre — Venise',       produits:['<b>Verre trempé</b> — protection anti-choc des cadrans','Savoir-faire verrier depuis le XIIIe s.'] },
+  { type:'extraction', continent:'europe', city:'Drag',              country:'Norvège',     coords:[15.35,68.65],       tag:'Quartz — Norvège',     produits:['<b>Quartz silencieux premium</b> — haute précision','Vibrations ultra-silencieuses, zéro tic-tac'] },
+  // Ventes
+  { type:'vente', continent:'americas', city:'New York',    country:'États-Unis',  coords:[-74.006,40.713],  tag:'Point de vente', produits:['<b>Boutique New York</b> — 5th Avenue','Marché américain premium'] },
+  { type:'vente', continent:'americas', city:'Los Angeles', country:'États-Unis',  coords:[-118.24,34.052],  tag:'Point de vente', produits:['<b>Boutique Los Angeles</b>','Clientèle luxe côte ouest'] },
+  { type:'vente', continent:'americas', city:'Ottawa',      country:'Canada',      coords:[-75.695,45.421],  tag:'Point de vente', produits:['<b>Boutique Ottawa</b>','Marché canadien'] },
+  { type:'vente', continent:'americas', city:'Brasilia',    country:'Brésil',      coords:[-47.929,-15.78],  tag:'Point de vente', produits:['<b>Boutique Brasilia</b>','Marché brésilien émergent'] },
+  { type:'vente', continent:'europe',   city:'Paris',       country:'France',      coords:[2.3522,48.856],   tag:'Point de vente', produits:['<b>Boutique Paris</b> — Faubourg Saint-Honoré','Vitrine européenne principale'] },
+  { type:'vente', continent:'europe',   city:'Berlin',      country:'Allemagne',   coords:[13.405,52.52],    tag:'Point de vente', produits:['<b>Boutique Berlin</b>','Marché germanophone'] },
+  { type:'vente', continent:'europe',   city:'Londres',     country:'Royaume-Uni', coords:[-0.128,51.507],   tag:'Point de vente', produits:['<b>Boutique Londres</b> — Bond Street','Marché britannique'] },
+  { type:'vente', continent:'europe',   city:'Madrid',      country:'Espagne',     coords:[-3.703,40.417],   tag:'Point de vente', produits:['<b>Boutique Madrid</b>','Marché ibérique'] },
+  { type:'vente', continent:'asia',     city:'Tokyo',       country:'Japon',       coords:[139.69,35.689],   tag:'Point de vente', produits:['<b>Boutique Tokyo</b> — Ginza','Marché japonais haut de gamme'] },
+  { type:'vente', continent:'asia',     city:'Séoul',       country:'Corée du Sud',coords:[126.978,37.566],  tag:'Point de vente', produits:['<b>Boutique Séoul</b>','Marché coréen en expansion'] },
+  { type:'vente', continent:'asia',     city:'Shanghai',    country:'Chine',       coords:[121.474,31.23],   tag:'Point de vente', produits:['<b>Boutique Shanghai</b>','Plus grand marché du luxe mondial'] },
 ];
 
-let zoomedIn = false, hoveredCont = null, currentCont = null;
-const wrap = document.getElementById('mapwrap');
-const tt   = document.getElementById('tt');
-
+let zoomedIn=false, hoveredCont=null, currentCont=null;
+const wrap=document.getElementById('mapwrap');
+const tt=document.getElementById('tt');
 function GW(){ return wrap.clientWidth; }
 function GH(){ return wrap.clientHeight; }
-
-let baseScale=153, baseCX=0, baseCY=0, zoomK=1, zoomTX=0, zoomTY=0;
+let baseScale=153,baseCX=0,baseCY=0,zoomK=1,zoomTX=0,zoomTY=0;
 
 function makeProj(){
   return d3.geoNaturalEarth1()
     .scale(baseScale*zoomK)
-    .translate([GW()/2+zoomTX, GH()/2+zoomTY])
+    .translate([GW()/2+zoomTX,GH()/2+zoomTY])
     .center([baseCX,baseCY]);
 }
 let proj=makeProj(), pg=d3.geoPath().projection(proj);
@@ -320,9 +378,13 @@ const svg=d3.select('#mapwrap').append('svg')
   .attr('width',GW()).attr('height',GH())
   .style('position','absolute').style('top',0).style('left',0);
 
+// Defs : deux marqueurs de flèches
 svg.append('defs').html(`
-  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
-    <path d="M1 1L9 5L1 9" fill="none" stroke="${C_FLUX}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <marker id="arr-mp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+    <path d="M1 1L9 5L1 9" fill="none" stroke="${C_FLUX_MP}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arr-vente" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+    <path d="M1 1L9 5L1 9" fill="none" stroke="${C_FLUX_VENTE}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </marker>
 `);
 
@@ -341,7 +403,6 @@ function getContByCentroid(lon,lat){
   if(lon>=25&&lat<-12) return 'oceania';
   return 'africa';
 }
-
 const contCache={};
 function getCont(d){
   if(contCache[d.id]!==undefined) return contCache[d.id];
@@ -349,37 +410,34 @@ function getCont(d){
   catch(e){ contCache[d.id]=null; }
   return contCache[d.id];
 }
-
-// Détecte si un feature est la France métropolitaine (centroïde en Europe)
 function isFranceMetro(d){
   if(+d.id!==250) return false;
-  try{
-    const[lo,la]=d3.geoCentroid(d);
-    // France métro : lon entre -5 et 9, lat entre 41 et 52
-    return lo>-5 && lo<9 && la>41 && la<52;
-  }catch(e){ return false; }
+  try{ const[lo,la]=d3.geoCentroid(d); return lo>-5&&lo<9&&la>41&&la<52; }
+  catch(e){ return false; }
 }
 
 function getCountryFill(d){
   const id=+d.id;
   const c=getCont(d);
-  const special=COUNTRY_SPECIAL[id];
-
-  // France : seulement métro
-  if(id===250){
-    if(!isFranceMetro(d)) return zoomedIn ? (c===currentCont?CONT_COLORS[c]:'#eaeae6') : (hoveredCont&&c===hoveredCont?CONT_COLORS[c]:'#eaeae6');
-    return special?special.fill:'#eaeae6';
+  // Hors zoom → couleur continent au survol seulement
+  if(!zoomedIn){
+    if(hoveredCont&&c===hoveredCont) return CONT_COLORS[c]||'#eaeae6';
+    return '#eaeae6';
   }
-
-  if(special) return special.fill;
-  if(!c) return '#eaeae6';
-  if(zoomedIn) return c===currentCont?CONT_COLORS[c]:'#eaeae6';
-  if(hoveredCont&&c===hoveredCont) return CONT_COLORS[c];
-  return '#eaeae6';
+  // Zoom : pays hors continent → gris
+  if(c!==currentCont) return '#eaeae6';
+  // Couleur spéciale ?
+  const sp=COUNTRY_SPECIAL_ZOOM[id];
+  if(sp){
+    // France : seulement métro
+    if(id===250) return isFranceMetro(d) ? sp : CONT_COLORS[c];
+    return sp;
+  }
+  return CONT_COLORS[c];
 }
 
 function refreshColors(){
-  svg.selectAll('path.ctry').attr('fill', function(d){ return getCountryFill(d); });
+  svg.selectAll('path.ctry').attr('fill',function(d){ return getCountryFill(d); });
 }
 
 const fluxGroup=svg.append('g').attr('class','flux-group');
@@ -391,10 +449,27 @@ function shorten(x1,y1,x2,y2,off){
   const ux=dx/d,uy=dy/d;
   return[x1+ux*off,y1+uy*off,x2-ux*off,y2-uy*off];
 }
-function midLabel(x1,y1,x2,y2){
+function midLabel(x1,y1,x2,y2,perp=10){
   const mx=(x1+x2)/2,my=(y1+y2)/2;
-  const dx=x2-x1,dy=y2-y1,d=Math.sqrt(dx*dx+dy*dy);
-  return[mx+(-dy/d)*9, my+(dx/d)*9];
+  const dx=x2-x1,dy=y2-y1,d=Math.sqrt(dx*dx+dy*dy)||1;
+  return[mx+(-dy/d)*perp, my+(dx/d)*perp];
+}
+function drawFluxLine(g,x1,y1,x2,y2,color,markerId,dash,lw){
+  g.append('line')
+    .attr('x1',x1).attr('y1',y1).attr('x2',x2).attr('y2',y2)
+    .attr('stroke',color).attr('stroke-width',lw||2)
+    .attr('stroke-dasharray',dash||'6,3')
+    .attr('marker-end','url(#'+markerId+')')
+    .attr('opacity',0.85);
+}
+function drawLabel(g,lx,ly,label,color){
+  const w=label.length*5.5+10, h=13;
+  g.append('rect').attr('x',lx-w/2).attr('y',ly-9).attr('width',w).attr('height',h)
+    .attr('fill','rgba(255,255,255,0.9)').attr('rx',2);
+  g.append('text').attr('x',lx).attr('y',ly)
+    .attr('text-anchor','middle').attr('font-size','9px')
+    .attr('font-family','system-ui,sans-serif').attr('font-weight','700')
+    .attr('fill',color||'#2a4a5a').text(label);
 }
 
 function repositionFlux(){
@@ -402,47 +477,58 @@ function repositionFlux(){
   if(!zoomedIn) return;
   proj=makeProj();
   const[gx,gy]=proj(GENEVE_COORDS);
-  sites.filter(s=>(s.type==='extraction'||s.type==='transfo')&&s.continent===currentCont&&s.city!=='Genève').forEach(s=>{
-    const[sx,sy]=proj(s.coords);
-    const[x1,y1,x2,y2]=shorten(sx,sy,gx,gy,10);
-    const[lx,ly]=midLabel(x1,y1,x2,y2);
-    const label=FLUX_LABEL[s.city]||'';
-    fluxGroup.append('line')
-      .attr('x1',x1).attr('y1',y1).attr('x2',x2).attr('y2',y2)
-      .attr('stroke',C_FLUX).attr('stroke-width',1.2)
-      .attr('stroke-dasharray','5,3').attr('marker-end','url(#arrow)').attr('opacity',0.7);
-    if(label){
-      const bbox={w:label.length*4.6+8,h:11};
-      const lg=fluxGroup.append('g');
-      lg.append('rect').attr('x',lx-bbox.w/2).attr('y',ly-8)
-        .attr('width',bbox.w).attr('height',bbox.h)
-        .attr('fill','rgba(255,255,255,0.85)').attr('rx',2);
-      lg.append('text').attr('x',lx).attr('y',ly)
-        .attr('text-anchor','middle').attr('font-size','7.5px')
-        .attr('font-family','system-ui,sans-serif').attr('font-weight','700')
-        .attr('fill','#2a4a5a').text(label);
+  const[fx,fy]=proj(FLORENCE_COORDS);
+  const[sx,sy]=proj(SOTKAMO_COORDS);
+
+  // ── Flèches MP ──
+  sites.filter(s=>s.type==='extraction'&&s.continent===currentCont).forEach(s=>{
+    const info=FLUX_MP[s.city];
+    if(!info) return;
+    const[ox,oy]=proj(s.coords);
+    let[tx,ty]=info.dest==='florence'?[fx,fy]:info.dest==='sotkamo'?[sx,sy]:[gx,gy];
+    const[x1,y1,x2,y2]=shorten(ox,oy,tx,ty,11);
+    const lg=fluxGroup.append('g');
+    drawFluxLine(lg,x1,y1,x2,y2,C_FLUX_MP,'arr-mp','6,3',2.2);
+    if(info.label){
+      const[lx,ly]=midLabel(x1,y1,x2,y2,11);
+      drawLabel(lg,lx,ly,info.label,C_FLUX_MP);
+    }
+  });
+
+  // Flèche Florence → Genève (transfo)
+  if(currentCont==='europe'){
+    const[x1,y1,x2,y2]=shorten(fx,fy,gx,gy,11);
+    const lg=fluxGroup.append('g');
+    drawFluxLine(lg,x1,y1,x2,y2,C_FLUX_MP,'arr-mp','6,3',2.2);
+    drawLabel(lg,...midLabel(x1,y1,x2,y2,11),'Coffrets bois',C_FLUX_MP);
+  }
+
+  // ── Flèches horloges → ventes (depuis Genève) ──
+  sites.filter(s=>s.type==='vente'&&s.continent===currentCont).forEach(s=>{
+    const[vx,vy]=proj(s.coords);
+    const[x1,y1,x2,y2]=shorten(gx,gy,vx,vy,11);
+    const lg=fluxGroup.append('g');
+    drawFluxLine(lg,x1,y1,x2,y2,C_FLUX_VENTE,'arr-vente','5,3',2);
+    // label seulement si assez de place
+    const dist=Math.sqrt((x2-x1)**2+(y2-y1)**2);
+    if(dist>60){
+      const[lx,ly]=midLabel(x1,y1,x2,y2,10);
+      drawLabel(lg,lx,ly,'Horloges',C_FLUX_VENTE);
     }
   });
 }
 
-function markerColor(type){
-  if(type==='extraction') return C_EXTRACTION;
-  if(type==='composant')  return C_COMPOSANT;
-  if(type==='siege')      return C_SIEGE;
-  if(type==='principale') return C_PRINCIPALE;
-  if(type==='transfo')    return C_TRANSFO;
-  if(type==='partenaire') return C_PARTENAIRE;
-  if(type==='vente')      return '#7B3F8C';
-  return '#888';
+function markerColor(t){
+  return {extraction:C_EXTRACTION,composant:C_COMPOSANT,siege:C_SIEGE,principale:C_PRINCIPALE,
+          transfo:C_TRANSFO,partenaire:C_PARTENAIRE,vente:C_VENTE}[t]||'#888';
 }
 function triPath(cx,cy,sz){ const w=sz*2,h=sz*2.2; return `M${cx} ${cy+h/2} L${cx-w/2} ${cy-h/2} L${cx+w/2} ${cy-h/2}Z`; }
 function sqPath(cx,cy,sz){ return `M${cx-sz} ${cy-sz} L${cx+sz} ${cy-sz} L${cx+sz} ${cy+sz} L${cx-sz} ${cy+sz}Z`; }
-function diamPath(cx,cy,sz){ return `M${cx} ${cy-sz*1.4} L${cx+sz} ${cy} L${cx} ${cy+sz*1.4} L${cx-sz} ${cy}Z`; }
-
+function diamPath(cx,cy,sz){ return `M${cx} ${cy-sz*1.5} L${cx+sz} ${cy} L${cx} ${cy+sz*1.5} L${cx-sz} ${cy}Z`; }
 function getShape(type,cx,cy,sz){
-  if(type==='extraction'||type==='composant') return triPath(cx,cy,sz);
-  if(type==='principale'||type==='transfo')   return sqPath(cx,cy,sz);
-  if(type==='vente')                          return diamPath(cx,cy,sz);
+  if(type==='extraction') return triPath(cx,cy,sz);
+  if(type==='principale'||type==='transfo') return sqPath(cx,cy,sz);
+  if(type==='vente') return diamPath(cx,cy,sz);
   return null;
 }
 
@@ -467,7 +553,7 @@ function repositionMarkers(){
       g.select('path.main').attr('d',getShape(s.type,px,py,sz));
     }
     const anchor=px>GW()*0.72?'end':'start';
-    const dx=px>GW()*0.72?-(sz+6):(sz+6);
+    const dx=px>GW()*0.72?-(sz+7):(sz+7);
     g.select('text').attr('x',px+dx).attr('y',py+4).attr('text-anchor',anchor);
   });
 }
@@ -481,7 +567,7 @@ const zoomBehavior=d3.zoom().scaleExtent([1,16])
   });
 svg.call(zoomBehavior);
 
-document.getElementById('zin').addEventListener('click', ()=>{ if(zoomedIn) svg.transition().duration(300).call(zoomBehavior.scaleBy,1.5); });
+document.getElementById('zin').addEventListener('click',()=>{ if(zoomedIn) svg.transition().duration(300).call(zoomBehavior.scaleBy,1.5); });
 document.getElementById('zout').addEventListener('click',()=>{ if(zoomedIn) svg.transition().duration(300).call(zoomBehavior.scaleBy,0.67); });
 
 document.getElementById('backbtn').addEventListener('click',function(){
@@ -507,8 +593,7 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
       .data(countries.features).enter()
       .append('path').attr('class','ctry')
       .attr('d',pg)
-      .attr('fill',d=>getCountryFill(d))
-      .attr('stroke','#c0c0bb').attr('stroke-width',0.4)
+      .attr('fill','#eaeae6').attr('stroke','#c0c0bb').attr('stroke-width',0.4)
       .style('transition','fill 0.2s')
       .on('mouseover',function(ev,d){
         if(zoomedIn) return;
@@ -541,7 +626,6 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
         document.getElementById('hint').style.display='none';
       });
 
-    // Marqueurs
     sites.forEach(s=>{
       const[px,py]=proj(s.coords);
       const color=markerColor(s.type);
@@ -557,7 +641,7 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
         g.append('path').attr('class','main').attr('d',getShape(s.type,px,py,sz)).attr('fill',color).attr('stroke','white').attr('stroke-width',1.5).attr('stroke-linejoin','round');
       }
       const anchor=px>GW()*0.72?'end':'start';
-      const dx=px>GW()*0.72?-(sz+6):(sz+6);
+      const dx=px>GW()*0.72?-(sz+7):(sz+7);
       g.append('text').attr('x',px+dx).attr('y',py+4)
         .attr('font-size','9.5px').attr('font-family','system-ui,sans-serif')
         .attr('font-weight','600').attr('text-anchor',anchor).attr('fill','#111').text(s.city);
@@ -565,7 +649,7 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
       g.on('mouseenter',function(ev){
         if(!zoomedIn||s.continent!==currentCont) return;
         const rect=wrap.getBoundingClientRect();
-        let left=ev.clientX-rect.left+14, top=ev.clientY-rect.top-55;
+        let left=ev.clientX-rect.left+14,top=ev.clientY-rect.top-55;
         if(left+275>rect.width) left=ev.clientX-rect.left-280;
         if(top<8) top=ev.clientY-rect.top+14;
         tt.style.left=left+'px'; tt.style.top=top+'px'; tt.style.display='block';
