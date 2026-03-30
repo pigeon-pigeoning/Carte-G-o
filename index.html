@@ -340,7 +340,7 @@ const SOTKAMO_COORDS = [28.39, 64.13];
 
 const sites = [
   // Siège & assemblage
-  { type:'principale', continent:'europe', city:'Genève',            country:'Suisse',      coords:GENEVE_COORDS,       tag:'Site d\'assemblage — zone franche', produits:['<b>Gamma SA</b> — maison mère''Usine horlogère, assemblage & décoration','Zone franche de Genève'] },
+  { type:'principale', continent:'europe', city:'Genève',            country:'Suisse',      coords:GENEVE_COORDS,       tag:'Site d\'assemblage — zone franche', produits:['<b>Gamma SA</b> — maison mère','Usine horlogère, assemblage & décoration','Zone franche de Genève'] },
   { type:'siege',      continent:'europe', city:'Lyon',              country:'France',      coords:[4.8357,45.764],     tag:'Siège social',       produits:['<b>Gamma France</b> — siège social','8 000 employés · CA 500M€/an','Fondée en 2015 · PDG : Frank Delafosse'] },
   { type:'transfo',    continent:'europe', city:'Florence',          country:'Italie',      coords:FLORENCE_COORDS,     tag:'Site de transformation — coffrage bois', produits:['<b>Coffrage du bois</b> — coffrets et écrins','Menuisiers italiens spécialisés','Transport ferroviaire vers Genève'] },
   { type:'partenaire', continent:'europe', city:'Rolex — Genève',    country:'Suisse',      coords:[6.155,46.212],      tag:'FTN investisseur & partenaire', produits:['<b>Rolex SA</b> — investisseur & partenaire','Siège mondial à Genève'] },
@@ -386,10 +386,17 @@ const svg=d3.select('#mapwrap').append('svg')
   .attr('width',GW()).attr('height',GH())
   .style('position','absolute').style('top',0).style('left',0);
 
-// Defs : deux marqueurs de flèches
+// Defs : marqueurs de flèches par mode de transport
+// maritime=#1A5276  ferroviaire=#7D3C98  route=#B7950B  vente(gris foncé)=#444
 svg.append('defs').html(`
-  <marker id="arr-mp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-    <path d="M1 1L9 5L1 9" fill="none" stroke="#777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <marker id="arr-maritime" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+    <path d="M1 1L9 5L1 9" fill="none" stroke="#1A5276" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arr-ferroviaire" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+    <path d="M1 1L9 5L1 9" fill="none" stroke="#7D3C98" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arr-route" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+    <path d="M1 1L9 5L1 9" fill="none" stroke="#B7950B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </marker>
   <marker id="arr-vente" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
     <path d="M1 1L9 5L1 9" fill="none" stroke="#444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -485,6 +492,19 @@ function drawLabel(g,lx,ly,label,color){
     .attr('fill',color||'#2a4a5a').text(label);
 }
 
+// Mode de transport par trajet (source → destination)
+// maritime=#1A5276  ferroviaire=#7D3C98  route=#B7950B
+const FLUX_TRANSPORT = {
+  'Kiruna':          { color:'#7D3C98', marker:'arr-ferroviaire', dash:'6,3' }, // Fer brut → Sotkamo : route/train
+  'Sotkamo':         { color:'#7D3C98', marker:'arr-ferroviaire', dash:'6,3' }, // Sotkamo → Genève : ferroviaire
+  'Kittilä':         { color:'#7D3C98', marker:'arr-ferroviaire', dash:'6,3' }, // Or → Genève : ferroviaire
+  'Parnasse':        { color:'#1A5276', marker:'arr-maritime',    dash:'6,3' }, // Alu → Genève : maritime
+  'Maremme Toscane': { color:'#B7950B', marker:'arr-route',       dash:'6,3' }, // Bois → Florence : route
+  'Florence':        { color:'#7D3C98', marker:'arr-ferroviaire', dash:'6,3' }, // Coffrets → Genève : ferroviaire
+  'Murano':          { color:'#B7950B', marker:'arr-route',       dash:'6,3' }, // Verre → Genève : route
+  'Drag':            { color:'#1A5276', marker:'arr-maritime',    dash:'6,3' }, // Quartz → Genève : maritime
+};
+
 function repositionFlux(){
   fluxGroup.selectAll('*').remove();
   if(!zoomedIn) return;
@@ -493,27 +513,28 @@ function repositionFlux(){
   const[fx,fy]=proj(FLORENCE_COORDS);
   const[sx,sy]=proj(SOTKAMO_COORDS);
 
-  // ── Flèches MP — gris pointillé ──
+  // ── Flèches MP — couleur selon mode de transport, pointillé ──
   sites.filter(s=>s.type==='extraction'&&s.continent===currentCont).forEach(s=>{
     const info=FLUX_MP[s.city];
     if(!info) return;
+    const tr=FLUX_TRANSPORT[s.city]||{ color:'#777', marker:'arr-ferroviaire', dash:'6,3' };
     const[ox,oy]=proj(s.coords);
     let[tx,ty]=info.dest==='florence'?[fx,fy]:info.dest==='sotkamo'?[sx,sy]:[gx,gy];
     const[x1,y1,x2,y2]=shorten(ox,oy,tx,ty,11);
     const lg=fluxGroup.append('g');
-    drawFluxLine(lg,x1,y1,x2,y2,'#777','arr-mp','6,3',2.2);
+    drawFluxLine(lg,x1,y1,x2,y2,tr.color,tr.marker,tr.dash,2.2);
     if(info.label){
       const[lx,ly]=midLabel(x1,y1,x2,y2,11);
-      drawLabel(lg,lx,ly,info.label,'#555');
+      drawLabel(lg,lx,ly,info.label,tr.color);
     }
   });
 
-  // Flèche Florence → Genève — gris pointillé
+  // Flèche Florence → Genève — ferroviaire violet pointillé
   if(currentCont==='europe'){
     const[x1,y1,x2,y2]=shorten(fx,fy,gx,gy,11);
     const lg=fluxGroup.append('g');
-    drawFluxLine(lg,x1,y1,x2,y2,'#777','arr-mp','6,3',2.2);
-    drawLabel(lg,...midLabel(x1,y1,x2,y2,11),'Coffrets bois','#555');
+    drawFluxLine(lg,x1,y1,x2,y2,'#7D3C98','arr-ferroviaire','6,3',2.2);
+    drawLabel(lg,...midLabel(x1,y1,x2,y2,11),'Coffrets bois','#7D3C98');
   }
 
   // ── Flèches horloges → ventes — gris foncé plein ──
